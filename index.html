@@ -2,15 +2,12 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <!-- Bloquea el zoom para que se sienta como una app real de iOS -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    
-    <!-- Etiquetas mágicas de Apple para pantalla completa y diseño nativo -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Admin Pro">
     
-    <!-- 👇 AQUÍ COLOCAS EL ENLACE DE LA IMAGEN PARA TU ÍCONO 👇 -->
+    <!-- Ícono de la App -->
     <link rel="apple-touch-icon" href="iconoADMI.png">
     
     <title>PANEL ADMIN - TIKTOK PRO</title>
@@ -31,7 +28,6 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            /* Añade espacio para el "Notch" (la cámara) del iPhone */
             padding-top: env(safe-area-inset-top); 
         }
 
@@ -93,7 +89,7 @@
             display: flex;
             height: 100vh;
             width: 100%;
-            display: none; /* Oculto hasta iniciar sesión */
+            display: none; 
         }
 
         /* Lista de Usuarios (Izquierda) */
@@ -137,6 +133,7 @@
             display: flex;
             flex-direction: column;
             background-color: #1a1a1a;
+            overflow-y: auto; /* Habilita el scroll general en esta sección */
         }
 
         .user-details-header {
@@ -268,22 +265,24 @@
         }
 
         /* ======================================================== */
-        /* 👇 AJUSTES RESPONSIVOS EXCLUSIVOS PARA TELÉFONOS (iPHONE) 👇 */
+        /* 👇 AJUSTES RESPONSIVOS CORREGIDOS PARA iPHONE 👇 */
         /* ======================================================== */
         @media (max-width: 768px) {
             #dashboard-section {
-                flex-direction: column; /* Apila los elementos de arriba a abajo */
+                flex-direction: column; 
             }
             .users-sidebar {
                 width: 100%;
-                height: 35vh; /* La lista de usuarios ocupa el 35% de la pantalla */
-                min-height: 200px;
+                height: 35vh; 
+                min-height: 150px; 
                 border-right: none;
                 border-bottom: 2px solid rgba(0, 243, 255, 0.5);
             }
             .main-content {
                 width: 100%;
-                height: 65vh; /* El chat y los detalles ocupan el 65% restante */
+                height: 65vh; 
+                display: block; /* Desactiva el flex para permitir scroll natural */
+                overflow-y: auto; /* 👈 ESTO SOLUCIONA QUE TE QUEDES ATRAPADO */
             }
             .user-details-header {
                 flex-direction: column;
@@ -295,9 +294,10 @@
                 width: 100%;
             }
             .btn-aprobar, .btn-rechazar {
-                width: 100%; /* Botones de aprobar a tamaño completo para tocarlos fácil */
+                width: 100%; 
                 margin-right: 0;
                 margin-bottom: 10px;
+                padding: 15px; /* Botones más gruesos para tocarlos fácil */
             }
             .historial-admin {
                 justify-content: center;
@@ -305,6 +305,14 @@
             .admin-panel-box {
                 width: 95%;
                 padding: 30px 20px;
+            }
+            .visor-revision img {
+                max-height: 300px; /* Evita que la imagen sea demasiado larga */
+                width: auto;
+            }
+            .bot-body {
+                overflow: visible; /* Quita el doble scroll interno */
+                min-height: 150px;
             }
         }
     </style>
@@ -332,12 +340,11 @@
                 <button id="btn-logout" style="background: none; border: none; color: #ff3b5c; margin-top: 10px; cursor: pointer;">Cerrar Sesión</button>
             </div>
             <div class="user-list" id="user-list-container">
-                <!-- Los usuarios aparecerán aquí dinámicamente -->
                 <p style="text-align: center; color: #666; margin-top: 20px;">Cargando usuarios...</p>
             </div>
         </div>
 
-        <!-- Chat y Detalles del Usuario Seleccionado -->
+        <!-- Panel Deslizable: Detalles, Revisión y Chat -->
         <div class="main-content">
           <div class="user-details-header">
                 <div>
@@ -351,30 +358,25 @@
                     <button id="btn-eliminar-usuario" style="background-color: #ff3b5c; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.8rem; margin-top: 10px; display: none;">🗑️ Eliminar Usuario</button>
                 </div>
             </div>
-             <!-- HISTORIAL DE PASOS DEL USUARIO SELECCIONADO -->
+            
             <div id="historial-admin" class="historial-admin" style="display: none;">
                 <span style="font-size: 0.9rem; color: #aaa;">Historial:</span>
                 <div id="botones-historial" style="display:flex; gap:10px; flex-wrap:wrap; justify-content: center;"></div>
             </div>
-           <!-- Estado en Tiempo Real del Usuario -->
+           
             <div id="panel-estado" class="estado-usuario" style="display: none;">
                 Estado: <span id="txt-estado" style="color: #00f3ff;">Esperando acción del usuario...</span>
             </div>
 
-            <!-- VISOR DE REVISIÓN (Aparece cuando el usuario envía un paso) -->
             <div id="visor-revision" class="visor-revision">
                 <h3 style="color: white; margin-bottom: 10px;">Revisión - Paso <span id="num-paso-revisar"></span></h3>
-                
-                <!-- Contenedor dinámico (Muestra foto o texto según el paso) -->
                 <div id="contenido-revisar"></div>
-                
                 <div style="margin-top: 15px;">
                     <button id="btn-aprobar" class="btn-aprobar">✅ Aprobar y Avanzar</button>
                     <button id="btn-rechazar" class="btn-rechazar">❌ Rechazar (Pedir de nuevo)</button>
                 </div>
             </div>
 
-            <!-- CHAT -->
             <div class="bot-body" id="chat-box">
                 <div style="text-align: center; margin-top: 50px; color: #666;">Selecciona un usuario en la lista superior para ver su progreso y chatear.</div>
             </div>
@@ -410,7 +412,6 @@ const firebaseConfig = {
         let currentUserId = null;
         let unsubscribeUser = null; 
 
-        // 1. LOGIN
         document.getElementById('btn-admin-login').addEventListener('click', () => {
             document.getElementById('admin-error').style.display = 'none';
             const email = document.getElementById('admin-email').value;
@@ -428,7 +429,6 @@ const firebaseConfig = {
             });
         });
 
-        // 2. SESIÓN
         onAuthStateChanged(auth, (user) => {
             if (user && user.email === "wilmergabriellucenacrespo@gmail.com") { 
                 loginSection.style.display = 'none'; dashboardSection.style.display = 'flex'; cargarUsuarios();
@@ -439,7 +439,6 @@ const firebaseConfig = {
 
         document.getElementById('btn-logout').addEventListener('click', () => signOut(auth));
 
-        // 3. CARGAR LISTA DE USUARIOS
         function cargarUsuarios() {
             onSnapshot(collection(db, "usuarios"), (snapshot) => {
                 const container = document.getElementById('user-list-container');
@@ -462,7 +461,6 @@ const firebaseConfig = {
             });
         }
 
-        // 4. ABRIR USUARIO Y ESCUCHAR SUS PASOS EN TIEMPO REAL
         window.abrirPanelUsuario = function(userId, userDataInicial) {
             currentUserId = userId;
             document.getElementById('panel-estado').style.display = 'block';
@@ -481,7 +479,6 @@ const firebaseConfig = {
             cargarChat(userId);
         };
 
-       // 5. MOSTRAR LA FOTO, HISTORIAL Y GESTIONAR EL ESTADO
         let pasoPendienteAdmin = 1;
 
         function actualizarVisor(datos) {
@@ -550,7 +547,6 @@ const firebaseConfig = {
             }
         }
         
-        // 6. BOTONES DE APROBAR / RECHAZAR
         document.getElementById('btn-aprobar').addEventListener('click', async () => {
             if(!currentUserId) return;
             await updateDoc(doc(db, "usuarios", currentUserId), {
@@ -572,7 +568,6 @@ const firebaseConfig = {
             });
         });
 
-        // 6.5. ELIMINAR USUARIO
         document.getElementById('btn-eliminar-usuario').addEventListener('click', async () => {
             if (!currentUserId) return;
             const confirmar = confirm("⚠️ ¿Estás totalmente seguro de que quieres eliminar a este usuario?");
@@ -597,7 +592,6 @@ const firebaseConfig = {
             }
         });
 
-        // 7. CHAT 
         function cargarChat(userId) {
             const chatBox = document.getElementById('chat-box');
             onSnapshot(query(collection(db, `chats/${userId}/mensajes`), orderBy("timestamp", "asc")), (snapshot) => {
@@ -609,6 +603,7 @@ const firebaseConfig = {
                     div.innerText = msg.texto;
                     chatBox.appendChild(div);
                 });
+                // Desplazamos al fondo del chat
                 chatBox.scrollTop = chatBox.scrollHeight;
             });
         }
@@ -622,7 +617,7 @@ const firebaseConfig = {
         document.getElementById('btn-send-msg').addEventListener('click', enviarMensaje);
         document.getElementById('chat-input').addEventListener('keypress', (e) => { if(e.key === 'Enter') enviarMensaje(); });
     </script>
-<!-- VENTANA FLOTANTE ADMIN -->
+
     <div id="visor-modal-admin" class="modal-visor">
         <div class="modal-box">
             <h3 style="color: #00f3ff; margin-bottom: 15px;" id="modal-titulo-admin">Paso Verificado</h3>
