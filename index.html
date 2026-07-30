@@ -33,15 +33,14 @@
         .bot-send-btn { background-color: #00f3ff; color: #0b2240; border: none; border-radius: 50%; width: 40px; height: 40px; font-weight: bold; font-size: 1.2rem; cursor: pointer; }
         .visor-revision { background-color: rgba(0, 0, 0, 0.6); border: 1px dashed #00f3ff; border-radius: 15px; padding: 20px; margin: 15px; text-align: center; display: none; }
         .visor-revision img { max-width: 100%; max-height: 350px; border-radius: 10px; margin-bottom: 15px; }
-        .btn-aprobar { background-color: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 10px; font-weight: bold; margin-right: 10px; }
-        .btn-rechazar { background-color: #ff3b5c; color: white; border: none; padding: 10px 20px; border-radius: 10px; font-weight: bold; }
+        .btn-aprobar { background-color: #28a745; color: white; border: none; padding: 15px 20px; border-radius: 10px; font-weight: bold; width: 100%; font-size: 1.1rem; cursor: pointer; }
+        .btn-rechazar { background-color: rgba(255, 59, 92, 0.2); color: #ff3b5c; border: 1px solid #ff3b5c; padding: 10px; border-radius: 10px; font-weight: bold; flex-grow: 1; cursor: pointer; font-size: 0.85rem; }
         .estado-usuario { background-color: #333; padding: 10px 15px; text-align: center; font-weight: bold; border-bottom: 1px solid rgba(0,243,255,0.3); }
         .historial-admin { padding: 10px 20px; background-color: rgba(0,0,0,0.5); border-bottom: 1px solid rgba(0, 243, 255, 0.3); display: flex; gap: 10px; flex-wrap: wrap; }
-        .btn-historial { background-color: rgba(40, 167, 69, 0.2); border: 1px solid #28a745; color: #28a745; padding: 5px 10px; border-radius: 10px; font-weight: bold; }
+        .btn-historial { background-color: rgba(40, 167, 69, 0.2); border: 1px solid #28a745; color: #28a745; padding: 5px 10px; border-radius: 10px; font-weight: bold; cursor: pointer;}
         .modal-visor { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; padding: 20px; }
         .modal-box { background: #111; padding: 20px; border-radius: 15px; border: 1px solid #00f3ff; text-align: center; max-width: 100%; max-height: 90vh; overflow-y: auto;}
         
-        /* Controles de Paginación */
         .pag-controls { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); }
         .pag-btn { background: #00f3ff; color: #111; border: none; padding: 8px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; }
         .pag-btn:disabled { background: #666; color: #aaa; cursor: not-allowed; }
@@ -51,7 +50,6 @@
             .users-sidebar { width: 100%; height: 40vh; min-height: 200px; border-bottom: 2px solid rgba(0, 243, 255, 0.5); } 
             .main-content { width: 100%; height: 60vh; display: block; overflow-y: auto; } 
             .user-details-header { flex-direction: column; text-align: center; gap: 10px; } 
-            .btn-aprobar, .btn-rechazar { width: 100%; margin-right: 0; margin-bottom: 10px; padding: 15px; } 
         }
     </style>
 </head>
@@ -90,7 +88,6 @@
             <div class="sidebar-header">
                 <h3 style="color: white;">Usuarios Registrados</h3>
                 <p id="total-users" style="color: #00f3ff; font-weight: bold; font-size: 1.1rem; margin-top: 5px;">Total: 0</p>
-                <!-- 👇 NUEVO BOTÓN DE FILTRO 👇 -->
                 <button id="btn-filtro" onclick="toggleFilter()" style="width: 100%; margin-top: 10px; background: #ffcc00; color: #111; border: none; padding: 10px; border-radius: 10px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(255,204,0,0.2);">🔔 Ver Solo Pendientes</button>
             </div>
             <div class="user-list" id="user-list-container">
@@ -121,9 +118,14 @@
             <div id="visor-revision" class="visor-revision">
                 <h3 style="color: white; margin-bottom: 10px;">Revisión - Paso <span id="num-paso-revisar"></span></h3>
                 <div id="contenido-revisar"></div>
-                <div style="margin-top: 15px;">
-                    <button id="btn-aprobar" class="btn-aprobar">✅ Aprobar</button>
-                    <button id="btn-rechazar" class="btn-rechazar">❌ Rechazar</button>
+                <!-- 👇 MENÚ DE APROBACIÓN Y RECHAZOS RÁPIDOS 👇 -->
+                <div style="margin-top: 15px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;">
+                    <button id="btn-aprobar" class="btn-aprobar">✅ APROBAR PASO</button>
+                    <p style="width: 100%; font-size: 0.8rem; margin: 10px 0 5px 0; color: #ff3b5c; font-weight: bold;">OPCIONES DE RECHAZO RÁPIDO:</p>
+                    <button class="btn-rechazar" onclick="rechazarRapido('La foto está borrosa o no se lee bien')">❌ Borrosa</button>
+                    <button class="btn-rechazar" onclick="rechazarRapido('El VPN no está encendido o visible')">❌ Sin VPN</button>
+                    <button class="btn-rechazar" onclick="rechazarRapido('La región o dirección es incorrecta')">❌ Mal Región</button>
+                    <button class="btn-rechazar" onclick="rechazarRapido('La captura es inválida')">❌ Otro Error</button>
                 </div>
             </div>
             <div class="bot-body" id="chat-box"><div style="text-align: center; margin-top: 50px; color: #666;">Selecciona un usuario para chatear.</div></div>
@@ -138,7 +140,7 @@
         <div class="modal-box">
             <h3 style="color: #00f3ff; margin-bottom: 15px;" id="modal-titulo-admin">Paso Verificado</h3>
             <div id="modal-contenido-admin"></div>
-            <button class="btn-rechazar" style="margin-top:15px; width:100%; padding:15px;" onclick="document.getElementById('visor-modal-admin').style.display='none'">Cerrar Visor</button>
+            <button class="btn-rechazar" style="margin-top:15px; width:100%; padding:15px; background:#ff3b5c; color:white;" onclick="document.getElementById('visor-modal-admin').style.display='none'">Cerrar Visor</button>
         </div>
     </div>
 
@@ -153,7 +155,6 @@
         let currentUserId = null; let unsubscribeUser = null; 
         let currentPin = ''; let settingUpPin = false; let requiresReviewGlobal = false; 
 
-        // VARIABLES DE PAGINACIÓN Y FILTRO
         let todosLosUsuarios = [];
         let paginaActual = 1;
         const usuariosPorPagina = 10;
@@ -193,38 +194,22 @@
 
         function abrirDashboard() { pinScreen.style.display = 'none'; dashboardScreen.style.display = 'flex'; audioAlert.play().then(() => audioAlert.pause()).catch(e=>{}); cargarUsuarios(); }
 
-        // 👇 FUNCIÓN DEL FILTRO Y PAGINADO 👇
         window.toggleFilter = function() {
             verSoloPendientes = !verSoloPendientes;
-            paginaActual = 1; // Volver a la pag 1 al filtrar
+            paginaActual = 1; 
             const btn = document.getElementById('btn-filtro');
-            if(verSoloPendientes) {
-                btn.innerText = "👥 Ver Todos los Usuarios";
-                btn.style.background = "#00f3ff";
-            } else {
-                btn.innerText = "🔔 Ver Solo Pendientes";
-                btn.style.background = "#ffcc00";
-            }
+            if(verSoloPendientes) { btn.innerText = "👥 Ver Todos los Usuarios"; btn.style.background = "#00f3ff"; } 
+            else { btn.innerText = "🔔 Ver Solo Pendientes"; btn.style.background = "#ffcc00"; }
             renderizarListaUsuarios();
         }
 
-        window.cambiarPagina = function(direccion) {
-            paginaActual += dirección;
-            renderizarListaUsuarios();
-        }
+        window.cambiarPagina = function(direccion) { paginaActual += direccion; renderizarListaUsuarios(); }
 
         function renderizarListaUsuarios() {
-            const container = document.getElementById('user-list-container');
-            container.innerHTML = ''; 
-
-            // Aplicar Filtro
-            let listaFiltrada = verSoloPendientes 
-                ? todosLosUsuarios.filter(u => u.estadoPaso === 'revision') 
-                : todosLosUsuarios;
-
+            const container = document.getElementById('user-list-container'); container.innerHTML = ''; 
+            let listaFiltrada = verSoloPendientes ? todosLosUsuarios.filter(u => u.estadoPaso === 'revision') : todosLosUsuarios;
             document.getElementById('total-users').innerText = `Total en lista: ${listaFiltrada.length}`;
 
-            // Calcular Paginación
             const totalPaginas = Math.ceil(listaFiltrada.length / usuariosPorPagina) || 1;
             if(paginaActual > totalPaginas) paginaActual = totalPaginas;
 
@@ -232,15 +217,10 @@
             const indexFin = indexInicio + usuariosPorPagina;
             const paginaUsuarios = listaFiltrada.slice(indexInicio, indexFin);
 
-            if(paginaUsuarios.length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: #666; margin-top: 20px;">No hay usuarios aquí.</p>';
-                return;
-            }
+            if(paginaUsuarios.length === 0) { container.innerHTML = '<p style="text-align: center; color: #666; margin-top: 20px;">No hay usuarios aquí.</p>'; return; }
 
-            // Pintar Tarjetas
             paginaUsuarios.forEach((user) => {
-                const div = document.createElement('div');
-                div.className = 'user-card';
+                const div = document.createElement('div'); div.className = 'user-card';
                 const colorNombre = user.estadoPaso === 'revision' ? '#ffcc00' : 'white';
                 const notificacion = user.estadoPaso === 'revision' ? ' 🔔' : '';
                 div.innerHTML = `<h4 style="color: ${colorNombre};">${user.nombre}${notificacion}</h4><p style="font-size: 0.8rem; color: #cfd8dc;">Paso Actual: ${user.pasoActual}</p>`;
@@ -248,9 +228,7 @@
                 container.appendChild(div);
             });
 
-            // Pintar Botones de Paginación
-            const pagControls = document.createElement('div');
-            pagControls.className = 'pag-controls';
+            const pagControls = document.createElement('div'); pagControls.className = 'pag-controls';
             pagControls.innerHTML = `
                 <button onclick="cambiarPagina(-1)" class="pag-btn" ${paginaActual === 1 ? 'disabled' : ''}>◀ Ant</button>
                 <span style="font-size: 0.8rem;">Pág ${paginaActual} de ${totalPaginas}</span>
@@ -261,29 +239,21 @@
 
         function cargarUsuarios() {
             onSnapshot(collection(db, "usuarios"), (snapshot) => {
-                todosLosUsuarios = [];
-                let hayRevisiones = false;
-
+                todosLosUsuarios = []; let hayRevisiones = false;
                 snapshot.forEach((doc) => {
-                    const user = { id: doc.id, ...doc.data() };
-                    todosLosUsuarios.push(user);
+                    const user = { id: doc.id, ...doc.data() }; todosLosUsuarios.push(user);
                     if (user.estadoPaso === 'revision') hayRevisiones = true;
                 });
-
-                // Ordenar: Los pendientes de revisión siempre arriba
                 todosLosUsuarios.sort((a, b) => {
                     if (a.estadoPaso === 'revision' && b.estadoPaso !== 'revision') return -1;
                     if (a.estadoPaso !== 'revision' && b.estadoPaso === 'revision') return 1;
                     return 0;
                 });
-
                 renderizarListaUsuarios();
-
-                if(hayRevisiones && !requiresReviewGlobal) { audioAlert.play().catch(e=>console.log("Audio bloqueado")); }
+                if(hayRevisiones && !requiresReviewGlobal) { audioAlert.play().catch(e=>{}); }
                 requiresReviewGlobal = hayRevisiones;
             });
         }
-        // 👆 FIN DE FUNCIÓN DEL FILTRO Y PAGINADO 👆
 
         window.abrirPanelUsuario = function(userId, userDataInicial) {
             currentUserId = userId; document.getElementById('panel-estado').style.display = 'block'; document.getElementById('chat-input').disabled = false; document.getElementById('btn-send-msg').disabled = false;
@@ -323,7 +293,7 @@
                 visor.style.display = 'block'; document.getElementById('num-paso-revisar').innerText = datos.pasoActual;
                 const contRevisar = document.getElementById('contenido-revisar'); const comprobante = datos[`comprobantePaso${datos.pasoActual}`];
                 if(datos.pasoActual === 1 || datos.pasoActual === 2 || datos.pasoActual === 5) { contRevisar.innerHTML = `<img src="${comprobante}" alt="Captura">`; } 
-                else if(datos.pasoActual === 3) { contRevisar.innerHTML = `<div class="visor-texto">${comprobante}</div>`; } 
+                else if(datos.pasoActual === 3) { contRevisar.innerHTML = `<div class="visor-texto" style="font-size:1.5rem; letter-spacing:2px; font-weight:bold;">${comprobante}</div>`; } 
                 else if(datos.pasoActual === 4) { contRevisar.innerHTML = `<p style="color: white; font-weight:bold;">El usuario confirmó descarga.</p>`; }
             } else { txtEstado.innerText = `Esperando que el usuario envíe el Paso ${datos.pasoActual}...`; txtEstado.style.color = "#00f3ff"; visor.style.display = 'none'; }
         }
@@ -332,10 +302,14 @@
             if(!currentUserId) return; await updateDoc(doc(db, "usuarios", currentUserId), { pasoActual: pasoPendienteAdmin + 1, estadoPaso: "pendiente" });
             await addDoc(collection(db, `chats/${currentUserId}/mensajes`), { texto: `✅ Paso ${pasoPendienteAdmin} Aprobado. Puedes continuar.`, sender: "admin", timestamp: serverTimestamp() });
         });
-        document.getElementById('btn-rechazar').addEventListener('click', async () => {
-            if(!currentUserId) return; await updateDoc(doc(db, "usuarios", currentUserId), { estadoPaso: "pendiente" });
-            await addDoc(collection(db, `chats/${currentUserId}/mensajes`), { texto: `❌ Hay un error en tu captura del Paso ${pasoPendienteAdmin}. Por favor envíala de nuevo correctamente.`, sender: "admin", timestamp: serverTimestamp() });
-        });
+
+        // 👇 LÓGICA DE RECHAZO RÁPIDO 👇
+        window.rechazarRapido = async function(motivo) {
+            if(!currentUserId) return; 
+            await updateDoc(doc(db, "usuarios", currentUserId), { estadoPaso: "pendiente" });
+            await addDoc(collection(db, `chats/${currentUserId}/mensajes`), { texto: `❌ Hay un error en tu Paso ${pasoPendienteAdmin}.\n\nDetalle: ${motivo}.\n\nPor favor, arréglalo y vuelve a subir la captura.`, sender: "admin", timestamp: serverTimestamp() });
+        }
+
         document.getElementById('btn-eliminar-usuario').addEventListener('click', async () => {
             if (!currentUserId) return;
             if (confirm("⚠️ ¿Eliminar a este usuario por completo?")) {
