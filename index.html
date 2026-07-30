@@ -55,10 +55,12 @@
         .pag-btn { background: #00f3ff; color: #111; border: none; padding: 8px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; }
         .pag-btn:disabled { background: #666; color: #aaa; cursor: not-allowed; }
 
+        /* Ajuste de pantalla para iPhone (Reparado) */
         @media (max-width: 768px) { 
-            #dashboard-section { flex-direction: column; } 
-            .users-sidebar { width: 100%; height: 40vh; min-height: 250px; border-bottom: 2px solid rgba(0, 243, 255, 0.5); } 
-            .main-content { width: 100%; height: 60vh; display: block; overflow-y: auto; } 
+            #dashboard-section { flex-direction: column; display: flex; } 
+            .users-sidebar { width: 100%; height: 55vh; flex: none; border-bottom: 2px solid rgba(0, 243, 255, 0.5); display: flex; flex-direction: column; } 
+            .user-list { flex-grow: 1; overflow-y: auto; min-height: 80px; }
+            .main-content { width: 100%; height: 45vh; flex: none; display: flex; flex-direction: column; overflow-y: auto; } 
             .user-details-header { flex-direction: column; text-align: center; gap: 10px; } 
         }
     </style>
@@ -119,7 +121,7 @@
                         <div id="stat-referidos" style="font-size: 1.1rem; font-weight: bold; color: #28a745;">0</div>
                     </div>
                 </div>
-                <button id="btn-filtro" onclick="toggleFilter()" style="width: 100%; background: #00f3ff; color: #111; border: none; padding: 10px; border-radius: 10px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(0,243,255,0.2);">👥 Ver Todos los Usuarios</button>
+                <button id="btn-filtro" onclick="toggleFilter()" style="width: 100%; background: #ffcc00; color: #111; border: none; padding: 10px; border-radius: 10px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(0,243,255,0.2);">🔔 Ver Solo Pendientes</button>
             </div>
             
             <div class="user-list" id="user-list-container">
@@ -251,8 +253,16 @@
         });
 
         window.toggleFilter = function() {
-            verSoloPendientes = !verSoloPendientes; paginaActual = 1; const btn = document.getElementById('btn-filtro');
-            if(verSoloPendientes) { btn.innerText = "🔔 Ver Solo Pendientes"; btn.style.background = "#ffcc00"; } else { btn.innerText = "👥 Ver Todos los Usuarios"; btn.style.background = "#00f3ff"; }
+            verSoloPendientes = !verSoloPendientes; 
+            paginaActual = 1; 
+            const btn = document.getElementById('btn-filtro');
+            if(verSoloPendientes) { 
+                btn.innerText = "👥 Ver Todos los Usuarios"; 
+                btn.style.background = "#00f3ff"; 
+            } else { 
+                btn.innerText = "🔔 Ver Solo Pendientes"; 
+                btn.style.background = "#ffcc00"; 
+            }
             renderizarListaUsuarios();
         }
 
