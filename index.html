@@ -109,7 +109,7 @@
                         <div id="stat-referidos" style="font-size: 1.1rem; font-weight: bold; color: #28a745;">0</div>
                     </div>
                 </div>
-                <button id="btn-filtro" onclick="toggleFilter()" style="width: 100%; background: #ffcc00; color: #111; border: none; padding: 10px; border-radius: 10px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(255,204,0,0.2);">🔔 Ver Solo Pendientes</button>
+                <button id="btn-filtro" onclick="toggleFilter()" style="width: 100%; background: #00f3ff; color: #111; border: none; padding: 10px; border-radius: 10px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(0,243,255,0.2);">👥 Ver Todos los Usuarios</button>
             </div>
             <div class="user-list" id="user-list-container"><p style="text-align: center; color: #666; margin-top: 20px;">Cargando usuarios...</p></div>
         </div>
@@ -177,6 +177,7 @@
         let currentUserId = null; let unsubscribeUser = null; 
         let currentPin = ''; let settingUpPin = false; let requiresReviewGlobal = false; 
 
+        // ⚠️ Por defecto mostraremos a TODOS los usuarios al abrir
         let todosLosUsuarios = []; let paginaActual = 1; const usuariosPorPagina = 10; let verSoloPendientes = false;
         const loginScreen = document.getElementById('login-section'); const pinScreen = document.getElementById('pin-section'); const dashboardScreen = document.getElementById('dashboard-section'); const audioAlert = document.getElementById('alerta-sonido');
 
@@ -203,7 +204,6 @@
         const toggleBot = document.getElementById('toggle-bot');
         const botStatusText = document.getElementById('bot-status-text');
 
-        // Escucha protegida para no bloquear el panel si hay un error de reglas
         onSnapshot(doc(db, "config", "admin"), (docSnap) => {
             if (docSnap.exists()) {
                 const isActivo = docSnap.data().botActivo;
@@ -212,54 +212,58 @@
                 else { botStatusText.innerText = "APAGADO"; botStatusText.style.color = "#ff3b5c"; }
             }
         }, (error) => {
-            console.warn("No se pudo leer la configuración del bot. Revisa tus Reglas de Firestore.", error);
+            console.warn("No se pudo leer la configuración del bot.", error);
         });
 
         toggleBot.addEventListener('change', async (e) => {
-            try {
-                await setDoc(doc(db, "config", "admin"), { botActivo: e.target.checked }, { merge: true });
-            } catch (error) {
-                alert("⚠️ Error al guardar el estado del bot. Asegúrate de actualizar tus reglas de Firebase.");
-                e.target.checked = !e.target.checked;
-            }
+            try { await setDoc(doc(db, "config", "admin"), { botActivo: e.target.checked }, { merge: true }); } catch (error) { e.target.checked = !e.target.checked; }
         });
 
         window.toggleFilter = function() {
             verSoloPendientes = !verSoloPendientes; paginaActual = 1; const btn = document.getElementById('btn-filtro');
-            if(verSoloPendientes) { btn.innerText = "👥 Ver Todos los Usuarios"; btn.style.background = "#00f3ff"; } else { btn.innerText = "🔔 Ver Solo Pendientes"; btn.style.background = "#ffcc00"; }
+            if(verSoloPendientes) { btn.innerText = "🔔 Ver Solo Pendientes"; btn.style.background = "#ffcc00"; } else { btn.innerText = "👥 Ver Todos los Usuarios"; btn.style.background = "#00f3ff"; }
             renderizarListaUsuarios();
         }
 
         window.cambiarPagina = function(direccion) { paginaActual += direccion; renderizarListaUsuarios(); }
 
+        // Función reforzada con Try-Catch para evitar pantallas en blanco
         function renderizarListaUsuarios() {
-            const container = document.getElementById('user-list-container'); container.innerHTML = ''; 
-            let listaFiltrada = verSoloPendientes ? todosLosUsuarios.filter(u => u.estadoPaso === 'revision' || u.retiroPendiente) : todosLosUsuarios;
+            try {
+                const container = document.getElementById('user-list-container'); container.innerHTML = ''; 
+                let listaFiltrada = verSoloPendientes ? todosLosUsuarios.filter(u => u.estadoPaso === 'revision' || u.retiroPendiente) : todosLosUsuarios;
 
-            const totalPaginas = Math.ceil(listaFiltrada.length / usuariosPorPagina) || 1;
-            if(paginaActual > totalPaginas) paginaActual = totalPaginas;
+                const totalPaginas = Math.ceil(listaFiltrada.length / usuariosPorPagina) || 1;
+                if(paginaActual > totalPaginas) paginaActual = totalPaginas;
 
-            const indexInicio = (paginaActual - 1) * usuariosPorPagina;
-            const indexFin = indexInicio + usuariosPorPagina;
-            const paginaUsuarios = listaFiltrada.slice(indexInicio, indexFin);
+                const indexInicio = (paginaActual - 1) * usuariosPorPagina;
+                const indexFin = indexInicio + usuariosPorPagina;
+                const paginaUsuarios = listaFiltrada.slice(indexInicio, indexFin);
 
-            if(paginaUsuarios.length === 0) { container.innerHTML = '<p style="text-align: center; color: #666; margin-top: 20px;">No hay usuarios aquí.</p>'; return; }
+                if(paginaUsuarios.length === 0) { container.innerHTML = '<p style="text-align: center; color: #666; margin-top: 20px;">No hay usuarios para mostrar aquí.</p>'; return; }
 
-            paginaUsuarios.forEach((user) => {
-                const div = document.createElement('div'); div.className = 'user-card';
-                const colorNombre = (user.estadoPaso === 'revision' || user.retiroPendiente) ? '#ffcc00' : 'white';
-                const notificacion = user.retiroPendiente ? ' 💸' : (user.estadoPaso === 'revision' ? ' 🔔' : '');
-                div.innerHTML = `<h4 style="color: ${colorNombre};">${user.nombre || "Usuario"}${notificacion}</h4><p style="font-size: 0.8rem; color: #cfd8dc;">Paso Actual: ${user.pasoActual || 1}</p>`;
-                div.onclick = () => abrirPanelUsuario(user.id, user);
-                container.appendChild(div);
-            });
+                paginaUsuarios.forEach((user) => {
+                    const div = document.createElement('div'); div.className = 'user-card';
+                    const colorNombre = (user.estadoPaso === 'revision' || user.retiroPendiente) ? '#ffcc00' : 'white';
+                    const notificacion = user.retiroPendiente ? ' 💸' : (user.estadoPaso === 'revision' ? ' 🔔' : '');
+                    
+                    // Protegemos la lectura del nombre y el paso para que no se congele si faltan datos
+                    const nombreSeguro = user.nombre || "Usuario Antiguo";
+                    const pasoSeguro = user.pasoActual || 1;
 
-            const pagControls = document.createElement('div'); pagControls.className = 'pag-controls';
-            pagControls.innerHTML = `<button onclick="cambiarPagina(-1)" class="pag-btn" ${paginaActual === 1 ? 'disabled' : ''}>◀ Ant</button><span style="font-size: 0.8rem;">Pág ${paginaActual} de ${totalPaginas}</span><button onclick="cambiarPagina(1)" class="pag-btn" ${paginaActual === totalPaginas ? 'disabled' : ''}>Sig ▶</button>`;
-            container.appendChild(pagControls);
+                    div.innerHTML = `<h4 style="color: ${colorNombre};">${nombreSeguro}${notificacion}</h4><p style="font-size: 0.8rem; color: #cfd8dc;">Paso Actual: ${pasoSeguro}</p>`;
+                    div.onclick = () => abrirPanelUsuario(user.id, user);
+                    container.appendChild(div);
+                });
+
+                const pagControls = document.createElement('div'); pagControls.className = 'pag-controls';
+                pagControls.innerHTML = `<button onclick="cambiarPagina(-1)" class="pag-btn" ${paginaActual === 1 ? 'disabled' : ''}>◀ Ant</button><span style="font-size: 0.8rem;">Pág ${paginaActual} de ${totalPaginas}</span><button onclick="cambiarPagina(1)" class="pag-btn" ${paginaActual === totalPaginas ? 'disabled' : ''}>Sig ▶</button>`;
+                container.appendChild(pagControls);
+            } catch (error) {
+                document.getElementById('user-list-container').innerHTML = `<p style="color: #ff3b5c; text-align: center; font-size: 0.9rem; padding: 10px;">⚠️ Error visual al mostrar lista: ${error.message}</p>`;
+            }
         }
 
-        // Carga de usuarios blindada contra errores
         function cargarUsuarios() {
             onSnapshot(collection(db, "usuarios"), (snapshot) => {
                 todosLosUsuarios = []; let hayRevisiones = false;
@@ -271,7 +275,7 @@
                         todosLosUsuarios.push(user);
                         if (user.estadoPaso === 'revision' || user.retiroPendiente) { hayRevisiones = true; totalRev++; }
                         if (user.cantidadReferidos) { totalRef += Number(user.cantidadReferidos); }
-                    } catch (e) { console.error("Error leyendo usuario:", e); }
+                    } catch (e) { console.error("Saltando usuario con datos corruptos", e); }
                 });
 
                 document.getElementById('stat-total').innerText = todosLosUsuarios.length;
@@ -288,7 +292,7 @@
                 if(hayRevisiones && !requiresReviewGlobal) { audioAlert.play().catch(e=>{}); }
                 requiresReviewGlobal = hayRevisiones;
             }, (error) => {
-                document.getElementById('user-list-container').innerHTML = `<p style="text-align: center; color: #ff3b5c; margin-top: 20px; font-weight: bold;">⚠️ Error de conexión: ${error.message}</p>`;
+                document.getElementById('user-list-container').innerHTML = `<p style="text-align: center; color: #ff3b5c; margin-top: 20px; font-weight: bold;">⚠️ Error de Firebase: ${error.message}</p>`;
             });
         }
 
