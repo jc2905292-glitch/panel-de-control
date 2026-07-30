@@ -3,10 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Admin Pro">
-    <link rel="apple-touch-icon" href="iconoADMI.png">
     <title>PANEL ADMIN - TIKTOK PRO</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, sans-serif; color: #cfd8dc; user-select: none; -webkit-user-select: none; }
@@ -16,38 +12,47 @@
         .admin-panel-box { background-color: rgba(0, 0, 0, 0.4); border-top: 2px solid #00f3ff; border-radius: 20px; padding: 40px 30px; width: 90%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,243,255,0.2); text-align: center; }
         input { -webkit-user-select: auto; user-select: auto; width: 100%; background-color: rgba(255, 255, 255, 0.1); border: 1px solid #00f3ff; border-radius: 20px; padding: 12px 15px; color: white; font-size: 1rem; outline: none; margin-bottom: 20px; }
         .btn-neon { width: 100%; padding: 12px 15px; background-color: #00f3ff; color: #0b2240; border: none; border-radius: 20px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: transform 0.2s; }
-        .btn-neon:active { transform: scale(0.96); }
         .pin-display { display: flex; justify-content: center; gap: 15px; margin-bottom: 30px; }
         .pin-dot { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #00f3ff; background-color: transparent; transition: all 0.2s; }
         .pin-dot.filled { background-color: #00f3ff; box-shadow: 0 0 10px #00f3ff; }
         .pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; max-width: 300px; margin: 0 auto; }
         .pin-btn { background-color: rgba(255,255,255,0.1); border: 1px solid rgba(0,243,255,0.3); border-radius: 50%; width: 70px; height: 70px; font-size: 1.8rem; color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; margin: auto; transition: background 0.2s; }
-        .pin-btn:active { background-color: #00f3ff; color: #0b2240; }
         .users-sidebar { width: 300px; background-color: #111; border-right: 1px solid rgba(0, 243, 255, 0.3); display: flex; flex-direction: column; }
         .sidebar-header { padding: 20px; border-bottom: 1px solid rgba(0, 243, 255, 0.3); text-align: center; }
-        .user-list { flex-grow: 1; overflow-y: auto; padding: 10px; }
+        .user-list { flex-grow: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column;}
         .user-card { background-color: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 10px; margin-bottom: 10px; cursor: pointer; border-left: 3px solid transparent; transition: all 0.3s; }
-        .user-card:hover, .user-card.active { background-color: rgba(0, 243, 255, 0.1); border-left: 3px solid #00f3ff; }
+        .user-card:hover { background-color: rgba(0, 243, 255, 0.1); border-left: 3px solid #00f3ff; }
         .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: #1a1a1a; overflow-y: auto; }
         .user-details-header { padding: 20px; background-color: rgba(0,0,0,0.5); border-bottom: 1px solid rgba(0, 243, 255, 0.3); display: flex; justify-content: space-between; align-items: center; }
         .bot-body { flex-grow: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-        .bot-msg, .user-msg { max-width: 85%; padding: 10px 15px; border-radius: 15px; font-size: 0.9rem; line-height: 1.4; word-wrap: break-word; }
+        .bot-msg, .user-msg { max-width: 85%; padding: 10px 15px; border-radius: 15px; font-size: 0.9rem; word-wrap: break-word; }
         .bot-msg { background-color: rgba(255, 255, 255, 0.1); color: #cfd8dc; align-self: flex-start; border-bottom-left-radius: 2px; border-left: 2px solid #00f3ff; }
         .user-msg { background-color: #00f3ff; color: #0b2240; font-weight: bold; align-self: flex-end; border-bottom-right-radius: 2px; }
         .bot-footer { padding: 10px; background-color: rgba(0, 0, 0, 0.3); border-top: 1px solid rgba(0, 243, 255, 0.3); display: flex; gap: 10px; padding-bottom: calc(10px + env(safe-area-inset-bottom)); }
         .bot-input { flex-grow: 1; background-color: rgba(255, 255, 255, 0.1); border: 1px solid #00f3ff; border-radius: 20px; padding: 8px 15px; color: white; outline: none; -webkit-user-select: auto; user-select: auto; }
-        .bot-send-btn { background-color: #00f3ff; color: #0b2240; border: none; border-radius: 50%; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 1.2rem; cursor: pointer; }
+        .bot-send-btn { background-color: #00f3ff; color: #0b2240; border: none; border-radius: 50%; width: 40px; height: 40px; font-weight: bold; font-size: 1.2rem; cursor: pointer; }
         .visor-revision { background-color: rgba(0, 0, 0, 0.6); border: 1px dashed #00f3ff; border-radius: 15px; padding: 20px; margin: 15px; text-align: center; display: none; }
-        .visor-revision img { max-width: 100%; max-height: 350px; border-radius: 10px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        .visor-texto { font-size: 1.5rem; color: #00f3ff; font-weight: bold; letter-spacing: 2px; margin-bottom: 15px; }
-        .btn-aprobar { background-color: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 1rem; margin-right: 10px; }
-        .btn-rechazar { background-color: #ff3b5c; color: white; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 1rem; }
+        .visor-revision img { max-width: 100%; max-height: 350px; border-radius: 10px; margin-bottom: 15px; }
+        .btn-aprobar { background-color: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 10px; font-weight: bold; margin-right: 10px; }
+        .btn-rechazar { background-color: #ff3b5c; color: white; border: none; padding: 10px 20px; border-radius: 10px; font-weight: bold; }
         .estado-usuario { background-color: #333; padding: 10px 15px; text-align: center; font-weight: bold; border-bottom: 1px solid rgba(0,243,255,0.3); }
-        .historial-admin { padding: 10px 20px; background-color: rgba(0,0,0,0.5); border-bottom: 1px solid rgba(0, 243, 255, 0.3); display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-        .btn-historial { background-color: rgba(40, 167, 69, 0.2); border: 1px solid #28a745; color: #28a745; padding: 5px 10px; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        .historial-admin { padding: 10px 20px; background-color: rgba(0,0,0,0.5); border-bottom: 1px solid rgba(0, 243, 255, 0.3); display: flex; gap: 10px; flex-wrap: wrap; }
+        .btn-historial { background-color: rgba(40, 167, 69, 0.2); border: 1px solid #28a745; color: #28a745; padding: 5px 10px; border-radius: 10px; font-weight: bold; }
         .modal-visor { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; padding: 20px; }
         .modal-box { background: #111; padding: 20px; border-radius: 15px; border: 1px solid #00f3ff; text-align: center; max-width: 100%; max-height: 90vh; overflow-y: auto;}
-        @media (max-width: 768px) { #dashboard-section { flex-direction: column; } .users-sidebar { width: 100%; height: 30vh; min-height: 150px; border-bottom: 2px solid rgba(0, 243, 255, 0.5); } .main-content { width: 100%; height: 70vh; display: block; overflow-y: auto; } .user-details-header { flex-direction: column; text-align: center; gap: 10px; } .btn-aprobar, .btn-rechazar { width: 100%; margin-right: 0; margin-bottom: 10px; padding: 15px; } .visor-revision img { max-height: 300px; width: auto; } }
+        
+        /* Controles de Paginación */
+        .pag-controls { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); }
+        .pag-btn { background: #00f3ff; color: #111; border: none; padding: 8px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .pag-btn:disabled { background: #666; color: #aaa; cursor: not-allowed; }
+
+        @media (max-width: 768px) { 
+            #dashboard-section { flex-direction: column; } 
+            .users-sidebar { width: 100%; height: 40vh; min-height: 200px; border-bottom: 2px solid rgba(0, 243, 255, 0.5); } 
+            .main-content { width: 100%; height: 60vh; display: block; overflow-y: auto; } 
+            .user-details-header { flex-direction: column; text-align: center; gap: 10px; } 
+            .btn-aprobar, .btn-rechazar { width: 100%; margin-right: 0; margin-bottom: 10px; padding: 15px; } 
+        }
     </style>
 </head>
 <body>
@@ -68,8 +73,7 @@
             <h2 id="pin-title" style="color: white; margin-bottom: 10px;">Ingresa tu PIN</h2>
             <p id="pin-error" style="color: #ff3b5c; margin-bottom: 20px; min-height: 20px;"></p>
             <div class="pin-display">
-                <div class="pin-dot" id="dot-1"></div><div class="pin-dot" id="dot-2"></div>
-                <div class="pin-dot" id="dot-3"></div><div class="pin-dot" id="dot-4"></div>
+                <div class="pin-dot" id="dot-1"></div><div class="pin-dot" id="dot-2"></div><div class="pin-dot" id="dot-3"></div><div class="pin-dot" id="dot-4"></div>
             </div>
             <div class="pin-pad">
                 <button class="pin-btn" onclick="addPin('1')">1</button><button class="pin-btn" onclick="addPin('2')">2</button><button class="pin-btn" onclick="addPin('3')">3</button>
@@ -85,13 +89,15 @@
         <div class="users-sidebar">
             <div class="sidebar-header">
                 <h3 style="color: white;">Usuarios Registrados</h3>
-                <!-- 👇 AQUÍ ESTÁ EL NUEVO CONTADOR 👇 -->
                 <p id="total-users" style="color: #00f3ff; font-weight: bold; font-size: 1.1rem; margin-top: 5px;">Total: 0</p>
+                <!-- 👇 NUEVO BOTÓN DE FILTRO 👇 -->
+                <button id="btn-filtro" onclick="toggleFilter()" style="width: 100%; margin-top: 10px; background: #ffcc00; color: #111; border: none; padding: 10px; border-radius: 10px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(255,204,0,0.2);">🔔 Ver Solo Pendientes</button>
             </div>
             <div class="user-list" id="user-list-container">
                 <p style="text-align: center; color: #666; margin-top: 20px;">Cargando usuarios...</p>
             </div>
         </div>
+
         <div class="main-content">
           <div class="user-details-header">
                 <div>
@@ -102,16 +108,15 @@
                     <p>Teléfono: <span id="active-user-tel" style="color: white;">---</span></p>
                     <p>Cédula: <span id="active-user-ci">---</span></p>
                     <p>Referidos Totales: <strong id="active-user-refs" style="color: #ffcc00;">0</strong></p>
-                    <p>Código VPN: <strong id="active-user-vpn" style="color: #00f3ff;">---</strong></p>
                     <button id="btn-eliminar-usuario" style="background-color: #ff3b5c; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.8rem; margin-top: 10px; display: none;">🗑️ Eliminar Usuario</button>
                 </div>
             </div>
             <div id="historial-admin" class="historial-admin" style="display: none;">
                 <span style="font-size: 0.9rem; color: #aaa;">Historial:</span>
-                <div id="botones-historial" style="display:flex; gap:10px; flex-wrap:wrap; justify-content: center;"></div>
+                <div id="botones-historial" style="display:flex; gap:10px; flex-wrap:wrap;"></div>
             </div>
             <div id="panel-estado" class="estado-usuario" style="display: none;">
-                Estado: <span id="txt-estado" style="color: #00f3ff;">Esperando acción del usuario...</span>
+                Estado: <span id="txt-estado" style="color: #00f3ff;">Esperando acción...</span>
             </div>
             <div id="visor-revision" class="visor-revision">
                 <h3 style="color: white; margin-bottom: 10px;">Revisión - Paso <span id="num-paso-revisar"></span></h3>
@@ -121,9 +126,7 @@
                     <button id="btn-rechazar" class="btn-rechazar">❌ Rechazar</button>
                 </div>
             </div>
-            <div class="bot-body" id="chat-box">
-                <div style="text-align: center; margin-top: 50px; color: #666;">Selecciona un usuario para chatear.</div>
-            </div>
+            <div class="bot-body" id="chat-box"><div style="text-align: center; margin-top: 50px; color: #666;">Selecciona un usuario para chatear.</div></div>
             <div class="bot-footer">
                 <input type="text" id="chat-input" class="bot-input" placeholder="Escribe al usuario..." disabled>
                 <button id="btn-send-msg" class="bot-send-btn" disabled>➤</button>
@@ -144,211 +147,202 @@
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, collection, onSnapshot, addDoc, query, orderBy, serverTimestamp, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";       
 
-        const firebaseConfig = {
-          apiKey: "AIzaSyDyyq2FR1ruQWlm954gH1Q0Y3KFIUn8-E4",
-          authDomain: "cuponestiktok-8b7cb.firebaseapp.com",
-          projectId: "cuponestiktok-8b7cb",
-          storageBucket: "cuponestiktok-8b7cb.firebasestorage.app",
-          messagingSenderId: "445103664448",
-          appId: "1:445103664448:web:a21a5441149505ed0b1ea5"
-        };
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+        const firebaseConfig = { apiKey: "AIzaSyDyyq2FR1ruQWlm954gH1Q0Y3KFIUn8-E4", authDomain: "cuponestiktok-8b7cb.firebaseapp.com", projectId: "cuponestiktok-8b7cb", storageBucket: "cuponestiktok-8b7cb.firebasestorage.app", messagingSenderId: "445103664448", appId: "1:445103664448:web:a21a5441149505ed0b1ea5" };
+        const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app);
 
         let currentUserId = null; let unsubscribeUser = null; 
         let currentPin = ''; let settingUpPin = false; let requiresReviewGlobal = false; 
 
-        const loginScreen = document.getElementById('login-section');
-        const pinScreen = document.getElementById('pin-section');
-        const dashboardScreen = document.getElementById('dashboard-section');
-        const audioAlert = document.getElementById('alerta-sonido');
+        // VARIABLES DE PAGINACIÓN Y FILTRO
+        let todosLosUsuarios = [];
+        let paginaActual = 1;
+        const usuariosPorPagina = 10;
+        let verSoloPendientes = false;
+
+        const loginScreen = document.getElementById('login-section'); const pinScreen = document.getElementById('pin-section'); const dashboardScreen = document.getElementById('dashboard-section'); const audioAlert = document.getElementById('alerta-sonido');
 
         window.addPin = function(num) {
-            if(currentPin.length < 4) {
-                currentPin += num;
-                document.getElementById('dot-' + currentPin.length).classList.add('filled');
-            }
+            if(currentPin.length < 4) { currentPin += num; document.getElementById('dot-' + currentPin.length).classList.add('filled'); }
             if(currentPin.length === 4) setTimeout(procesarPin, 200); 
         }
         window.delPin = function() {
-            if(currentPin.length > 0) {
-                document.getElementById('dot-' + currentPin.length).classList.remove('filled');
-                currentPin = currentPin.slice(0, -1);
-            }
+            if(currentPin.length > 0) { document.getElementById('dot-' + currentPin.length).classList.remove('filled'); currentPin = currentPin.slice(0, -1); }
         }
-        function resetPinUI() {
-            currentPin = '';
-            for(let i=1; i<=4; i++) document.getElementById('dot-'+i).classList.remove('filled');
-        }
+        function resetPinUI() { currentPin = ''; for(let i=1; i<=4; i++) document.getElementById('dot-'+i).classList.remove('filled'); }
         function procesarPin() {
-            const savedPin = localStorage.getItem('admin_pin_tiktok');
-            const pinError = document.getElementById('pin-error');
-            if(settingUpPin) {
-                localStorage.setItem('admin_pin_tiktok', currentPin);
-                abrirDashboard();
-            } else {
-                if(currentPin === savedPin) { abrirDashboard(); } 
-                else { pinError.innerText = "PIN Incorrecto"; resetPinUI(); setTimeout(() => pinError.innerText = "", 2000); }
-            }
+            const savedPin = localStorage.getItem('admin_pin_tiktok'); const pinError = document.getElementById('pin-error');
+            if(settingUpPin) { localStorage.setItem('admin_pin_tiktok', currentPin); abrirDashboard(); } 
+            else { if(currentPin === savedPin) { abrirDashboard(); } else { pinError.innerText = "PIN Incorrecto"; resetPinUI(); setTimeout(() => pinError.innerText = "", 2000); } }
         }
-        window.cerrarSesionTotal = function() {
-            localStorage.removeItem('admin_pin_tiktok');
-            signOut(auth).then(() => { window.location.reload(); });
-        }
+        window.cerrarSesionTotal = function() { localStorage.removeItem('admin_pin_tiktok'); signOut(auth).then(() => { window.location.reload(); }); }
 
         document.getElementById('btn-admin-login').addEventListener('click', () => {
             document.getElementById('admin-error').style.display = 'none';
-            const email = document.getElementById('admin-email').value;
-            const pass = document.getElementById('admin-pass').value;
-            if(email !== "wilmergabriellucenacrespo@gmail.com") { 
-                document.getElementById('admin-error').innerText = "Acceso denegado."; document.getElementById('admin-error').style.display = 'block'; return;
-            }
-            signInWithEmailAndPassword(auth, email, pass).catch(err => {
-                document.getElementById('admin-error').innerText = "Error: " + err.message; document.getElementById('admin-error').style.display = 'block';
-            });
+            const email = document.getElementById('admin-email').value; const pass = document.getElementById('admin-pass').value;
+            if(email !== "wilmergabriellucenacrespo@gmail.com") { document.getElementById('admin-error').innerText = "Acceso denegado."; document.getElementById('admin-error').style.display = 'block'; return; }
+            signInWithEmailAndPassword(auth, email, pass).catch(err => { document.getElementById('admin-error').innerText = "Error: " + err.message; document.getElementById('admin-error').style.display = 'block'; });
         });
 
         onAuthStateChanged(auth, (user) => {
             if (user && user.email === "wilmergabriellucenacrespo@gmail.com") { 
                 loginScreen.style.display = 'none';
-                if(localStorage.getItem('admin_pin_tiktok')) {
-                    settingUpPin = false; document.getElementById('pin-title').innerText = "Ingresa tu PIN"; pinScreen.style.display = 'flex';
-                } else {
-                    settingUpPin = true; document.getElementById('pin-title').innerText = "Crea un PIN de 4 dígitos"; pinScreen.style.display = 'flex';
-                }
-            } else {
-                loginScreen.style.display = 'flex'; pinScreen.style.display = 'none'; dashboardScreen.style.display = 'none';
-            }
+                if(localStorage.getItem('admin_pin_tiktok')) { settingUpPin = false; document.getElementById('pin-title').innerText = "Ingresa tu PIN"; pinScreen.style.display = 'flex'; } 
+                else { settingUpPin = true; document.getElementById('pin-title').innerText = "Crea un PIN de 4 dígitos"; pinScreen.style.display = 'flex'; }
+            } else { loginScreen.style.display = 'flex'; pinScreen.style.display = 'none'; dashboardScreen.style.display = 'none'; }
         });
 
-        function abrirDashboard() {
-            pinScreen.style.display = 'none'; dashboardScreen.style.display = 'flex'; 
-            audioAlert.play().then(() => audioAlert.pause()).catch(e=>{});
-            cargarUsuarios();
+        function abrirDashboard() { pinScreen.style.display = 'none'; dashboardScreen.style.display = 'flex'; audioAlert.play().then(() => audioAlert.pause()).catch(e=>{}); cargarUsuarios(); }
+
+        // 👇 FUNCIÓN DEL FILTRO Y PAGINADO 👇
+        window.toggleFilter = function() {
+            verSoloPendientes = !verSoloPendientes;
+            paginaActual = 1; // Volver a la pag 1 al filtrar
+            const btn = document.getElementById('btn-filtro');
+            if(verSoloPendientes) {
+                btn.innerText = "👥 Ver Todos los Usuarios";
+                btn.style.background = "#00f3ff";
+            } else {
+                btn.innerText = "🔔 Ver Solo Pendientes";
+                btn.style.background = "#ffcc00";
+            }
+            renderizarListaUsuarios();
+        }
+
+        window.cambiarPagina = function(direccion) {
+            paginaActual += dirección;
+            renderizarListaUsuarios();
+        }
+
+        function renderizarListaUsuarios() {
+            const container = document.getElementById('user-list-container');
+            container.innerHTML = ''; 
+
+            // Aplicar Filtro
+            let listaFiltrada = verSoloPendientes 
+                ? todosLosUsuarios.filter(u => u.estadoPaso === 'revision') 
+                : todosLosUsuarios;
+
+            document.getElementById('total-users').innerText = `Total en lista: ${listaFiltrada.length}`;
+
+            // Calcular Paginación
+            const totalPaginas = Math.ceil(listaFiltrada.length / usuariosPorPagina) || 1;
+            if(paginaActual > totalPaginas) paginaActual = totalPaginas;
+
+            const indexInicio = (paginaActual - 1) * usuariosPorPagina;
+            const indexFin = indexInicio + usuariosPorPagina;
+            const paginaUsuarios = listaFiltrada.slice(indexInicio, indexFin);
+
+            if(paginaUsuarios.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #666; margin-top: 20px;">No hay usuarios aquí.</p>';
+                return;
+            }
+
+            // Pintar Tarjetas
+            paginaUsuarios.forEach((user) => {
+                const div = document.createElement('div');
+                div.className = 'user-card';
+                const colorNombre = user.estadoPaso === 'revision' ? '#ffcc00' : 'white';
+                const notificacion = user.estadoPaso === 'revision' ? ' 🔔' : '';
+                div.innerHTML = `<h4 style="color: ${colorNombre};">${user.nombre}${notificacion}</h4><p style="font-size: 0.8rem; color: #cfd8dc;">Paso Actual: ${user.pasoActual}</p>`;
+                div.onclick = () => abrirPanelUsuario(user.id, user);
+                container.appendChild(div);
+            });
+
+            // Pintar Botones de Paginación
+            const pagControls = document.createElement('div');
+            pagControls.className = 'pag-controls';
+            pagControls.innerHTML = `
+                <button onclick="cambiarPagina(-1)" class="pag-btn" ${paginaActual === 1 ? 'disabled' : ''}>◀ Ant</button>
+                <span style="font-size: 0.8rem;">Pág ${paginaActual} de ${totalPaginas}</span>
+                <button onclick="cambiarPagina(1)" class="pag-btn" ${paginaActual === totalPaginas ? 'disabled' : ''}>Sig ▶</button>
+            `;
+            container.appendChild(pagControls);
         }
 
         function cargarUsuarios() {
             onSnapshot(collection(db, "usuarios"), (snapshot) => {
-                const container = document.getElementById('user-list-container');
-                container.innerHTML = ''; 
+                todosLosUsuarios = [];
                 let hayRevisiones = false;
-                let conteoTotal = 0; // NUEVO: Variable para contar usuarios
 
                 snapshot.forEach((doc) => {
-                    conteoTotal++; // Suma 1 por cada usuario encontrado
-                    const user = doc.data();
-                    const div = document.createElement('div');
-                    div.className = 'user-card';
-                    
+                    const user = { id: doc.id, ...doc.data() };
+                    todosLosUsuarios.push(user);
                     if (user.estadoPaso === 'revision') hayRevisiones = true;
-                    const colorNombre = user.estadoPaso === 'revision' ? '#ffcc00' : 'white';
-                    const notificacion = user.estadoPaso === 'revision' ? ' 🔔' : '';
-                    
-                    div.innerHTML = `<h4 style="color: ${colorNombre};">${user.nombre}${notificacion}</h4>
-                                     <p style="font-size: 0.8rem; color: #cfd8dc;">Paso Actual: ${user.pasoActual}</p>`;
-                    div.onclick = () => abrirPanelUsuario(doc.id, user);
-                    container.appendChild(div);
                 });
-                
-                // Actualiza el texto del contador en pantalla
-                document.getElementById('total-users').innerText = `Total: ${conteoTotal}`;
+
+                // Ordenar: Los pendientes de revisión siempre arriba
+                todosLosUsuarios.sort((a, b) => {
+                    if (a.estadoPaso === 'revision' && b.estadoPaso !== 'revision') return -1;
+                    if (a.estadoPaso !== 'revision' && b.estadoPaso === 'revision') return 1;
+                    return 0;
+                });
+
+                renderizarListaUsuarios();
 
                 if(hayRevisiones && !requiresReviewGlobal) { audioAlert.play().catch(e=>console.log("Audio bloqueado")); }
                 requiresReviewGlobal = hayRevisiones;
             });
         }
+        // 👆 FIN DE FUNCIÓN DEL FILTRO Y PAGINADO 👆
 
         window.abrirPanelUsuario = function(userId, userDataInicial) {
-            currentUserId = userId;
-            document.getElementById('panel-estado').style.display = 'block';
-            document.getElementById('chat-input').disabled = false;
-            document.getElementById('btn-send-msg').disabled = false;
-
+            currentUserId = userId; document.getElementById('panel-estado').style.display = 'block'; document.getElementById('chat-input').disabled = false; document.getElementById('btn-send-msg').disabled = false;
             if(unsubscribeUser) unsubscribeUser();
-            unsubscribeUser = onSnapshot(doc(db, "usuarios", userId), (documento) => {
-                if(documento.exists()) actualizarVisor(documento.data());
-            });
+            unsubscribeUser = onSnapshot(doc(db, "usuarios", userId), (documento) => { if(documento.exists()) actualizarVisor(documento.data()); });
             cargarChat(userId);
         };
 
         let pasoPendienteAdmin = 1;
         function actualizarVisor(datos) {
-            document.getElementById('active-user-name').innerText = datos.nombre + " " + datos.apellido;
-            document.getElementById('active-user-email').innerText = datos.email;
-            document.getElementById('active-user-ci').innerText = datos.cedula;
-            document.getElementById('active-user-tel').innerText = datos.telefono || "No registrado";
-            document.getElementById('btn-eliminar-usuario').style.display = 'inline-block';
+            document.getElementById('active-user-name').innerText = datos.nombre + " " + datos.apellido; document.getElementById('active-user-email').innerText = datos.email;
+            document.getElementById('active-user-ci').innerText = datos.cedula; document.getElementById('active-user-tel').innerText = datos.telefono || "No registrado";
             document.getElementById('active-user-refs').innerText = datos.cantidadReferidos || "0";
+            document.getElementById('btn-eliminar-usuario').style.display = 'inline-block';
             
-            const contHistorial = document.getElementById('historial-admin');
-            const botonesDiv = document.getElementById('botones-historial');
-            botonesDiv.innerHTML = '';
-            
+            const contHistorial = document.getElementById('historial-admin'); const botonesDiv = document.getElementById('botones-historial'); botonesDiv.innerHTML = '';
             if(datos.pasoActual > 1) {
                 contHistorial.style.display = 'flex';
                 for(let i = 1; i < datos.pasoActual; i++) {
                     if(i === 4) continue; 
-                    const btn = document.createElement('button');
-                    btn.className = 'btn-historial'; btn.innerText = '✅ Ver Paso ' + i;
+                    const btn = document.createElement('button'); btn.className = 'btn-historial'; btn.innerText = '✅ Ver Paso ' + i;
                     btn.onclick = () => {
-                        document.getElementById('visor-modal-admin').style.display = 'flex';
-                        document.getElementById('modal-titulo-admin').innerText = 'Comprobante Paso ' + i;
+                        document.getElementById('visor-modal-admin').style.display = 'flex'; document.getElementById('modal-titulo-admin').innerText = 'Comprobante Paso ' + i;
                         const cont = document.getElementById('modal-contenido-admin');
                         if(i === 3) cont.innerHTML = `<h2 style="color:white; letter-spacing: 2px;">${datos['comprobantePaso'+i]}</h2>`;
                         else cont.innerHTML = `<img src="${datos['comprobantePaso'+i]}" style="max-width: 100%; border-radius: 10px;">`;
-                    };
-                    botonesDiv.appendChild(btn);
+                    }; botonesDiv.appendChild(btn);
                 }
             } else { contHistorial.style.display = 'none'; }
 
-            const visor = document.getElementById('visor-revision');
-            const txtEstado = document.getElementById('txt-estado');
-            pasoPendienteAdmin = datos.pasoActual;
+            const visor = document.getElementById('visor-revision'); const txtEstado = document.getElementById('txt-estado'); pasoPendienteAdmin = datos.pasoActual;
 
-            if(datos.pasoActual > 5) {
-                visor.style.display = 'none'; txtEstado.innerText = "¡PROCESO 100% COMPLETADO!"; txtEstado.style.color = "#28a745"; return;
-            }
+            if(datos.pasoActual > 5) { visor.style.display = 'none'; txtEstado.innerText = "¡PROCESO 100% COMPLETADO!"; txtEstado.style.color = "#28a745"; return; }
 
             if (datos.estadoPaso === "revision") {
                 txtEstado.innerText = `Revisando Paso ${datos.pasoActual} (Requiere tu aprobación)`; txtEstado.style.color = "#ffcc00";
                 visor.style.display = 'block'; document.getElementById('num-paso-revisar').innerText = datos.pasoActual;
-                
-                const contRevisar = document.getElementById('contenido-revisar');
-                const comprobante = datos[`comprobantePaso${datos.pasoActual}`];
-                
-                if(datos.pasoActual === 1 || datos.pasoActual === 2 || datos.pasoActual === 5) {
-                    contRevisar.innerHTML = `<img src="${comprobante}" alt="Captura">`;
-                } else if(datos.pasoActual === 3) {
-                    contRevisar.innerHTML = `<div class="visor-texto">${comprobante}</div><p style="font-size:0.8rem;">VPN Asignado.</p>`;
-                } else if(datos.pasoActual === 4) {
-                    contRevisar.innerHTML = `<p style="color: white; font-weight:bold;">El usuario confirmó que ya descargó la app.</p>`;
-                }
-            } else {
-                txtEstado.innerText = `Esperando que el usuario envíe el Paso ${datos.pasoActual}...`; txtEstado.style.color = "#00f3ff"; visor.style.display = 'none';
-            }
+                const contRevisar = document.getElementById('contenido-revisar'); const comprobante = datos[`comprobantePaso${datos.pasoActual}`];
+                if(datos.pasoActual === 1 || datos.pasoActual === 2 || datos.pasoActual === 5) { contRevisar.innerHTML = `<img src="${comprobante}" alt="Captura">`; } 
+                else if(datos.pasoActual === 3) { contRevisar.innerHTML = `<div class="visor-texto">${comprobante}</div>`; } 
+                else if(datos.pasoActual === 4) { contRevisar.innerHTML = `<p style="color: white; font-weight:bold;">El usuario confirmó descarga.</p>`; }
+            } else { txtEstado.innerText = `Esperando que el usuario envíe el Paso ${datos.pasoActual}...`; txtEstado.style.color = "#00f3ff"; visor.style.display = 'none'; }
         }
         
         document.getElementById('btn-aprobar').addEventListener('click', async () => {
-            if(!currentUserId) return;
-            await updateDoc(doc(db, "usuarios", currentUserId), { pasoActual: pasoPendienteAdmin + 1, estadoPaso: "pendiente" });
+            if(!currentUserId) return; await updateDoc(doc(db, "usuarios", currentUserId), { pasoActual: pasoPendienteAdmin + 1, estadoPaso: "pendiente" });
             await addDoc(collection(db, `chats/${currentUserId}/mensajes`), { texto: `✅ Paso ${pasoPendienteAdmin} Aprobado. Puedes continuar.`, sender: "admin", timestamp: serverTimestamp() });
         });
         document.getElementById('btn-rechazar').addEventListener('click', async () => {
-            if(!currentUserId) return;
-            await updateDoc(doc(db, "usuarios", currentUserId), { estadoPaso: "pendiente" });
+            if(!currentUserId) return; await updateDoc(doc(db, "usuarios", currentUserId), { estadoPaso: "pendiente" });
             await addDoc(collection(db, `chats/${currentUserId}/mensajes`), { texto: `❌ Hay un error en tu captura del Paso ${pasoPendienteAdmin}. Por favor envíala de nuevo correctamente.`, sender: "admin", timestamp: serverTimestamp() });
         });
         document.getElementById('btn-eliminar-usuario').addEventListener('click', async () => {
             if (!currentUserId) return;
             if (confirm("⚠️ ¿Eliminar a este usuario por completo?")) {
                 try {
-                    await deleteDoc(doc(db, "usuarios", currentUserId));
-                    document.getElementById('panel-estado').style.display = 'none'; document.getElementById('visor-revision').style.display = 'none';
-                    document.getElementById('historial-admin').style.display = 'none'; document.getElementById('active-user-name').innerText = "Selecciona un usuario";
-                    document.getElementById('btn-eliminar-usuario').style.display = 'none';
-                    document.getElementById('chat-box').innerHTML = '<div style="text-align: center; margin-top: 50px; color: #666;">Selecciona un usuario...</div>';
-                    currentUserId = null;
+                    await deleteDoc(doc(db, "usuarios", currentUserId)); document.getElementById('panel-estado').style.display = 'none'; document.getElementById('visor-revision').style.display = 'none';
+                    document.getElementById('historial-admin').style.display = 'none'; document.getElementById('active-user-name').innerText = "Selecciona un usuario"; document.getElementById('btn-eliminar-usuario').style.display = 'none';
+                    document.getElementById('chat-box').innerHTML = '<div style="text-align: center; margin-top: 50px; color: #666;">Selecciona un usuario...</div>'; currentUserId = null;
                 } catch(error) { alert("Error: " + error.message); }
             }
         });
@@ -357,24 +351,12 @@
             const chatBox = document.getElementById('chat-box');
             onSnapshot(query(collection(db, `chats/${userId}/mensajes`), orderBy("timestamp", "asc")), (snapshot) => {
                 chatBox.innerHTML = ''; 
-                snapshot.forEach((doc) => {
-                    const msg = doc.data();
-                    const div = document.createElement('div');
-                    div.className = msg.sender === 'admin' ? 'user-msg' : 'bot-msg'; div.innerText = msg.texto;
-                    chatBox.appendChild(div);
-                });
+                snapshot.forEach((doc) => { const msg = doc.data(); const div = document.createElement('div'); div.className = msg.sender === 'admin' ? 'user-msg' : 'bot-msg'; div.innerText = msg.texto; chatBox.appendChild(div); });
                 chatBox.scrollTop = chatBox.scrollHeight;
             });
         }
-
-        async function enviarMensaje() {
-            const input = document.getElementById('chat-input');
-            if (input.value.trim() === "" || !currentUserId) return;
-            const texto = input.value.trim(); input.value = '';
-            await addDoc(collection(db, `chats/${currentUserId}/mensajes`), { texto: texto, sender: "admin", timestamp: serverTimestamp() });
-        }
-        document.getElementById('btn-send-msg').addEventListener('click', enviarMensaje);
-        document.getElementById('chat-input').addEventListener('keypress', (e) => { if(e.key === 'Enter') enviarMensaje(); });
+        async function enviarMensaje() { const input = document.getElementById('chat-input'); if (input.value.trim() === "" || !currentUserId) return; const texto = input.value.trim(); input.value = ''; await addDoc(collection(db, `chats/${currentUserId}/mensajes`), { texto: texto, sender: "admin", timestamp: serverTimestamp() }); }
+        document.getElementById('btn-send-msg').addEventListener('click', enviarMensaje); document.getElementById('chat-input').addEventListener('keypress', (e) => { if(e.key === 'Enter') enviarMensaje(); });
     </script>
 </body>
 </html>
