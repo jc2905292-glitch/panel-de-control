@@ -47,7 +47,7 @@
 
         @media (max-width: 768px) { 
             #dashboard-section { flex-direction: column; } 
-            .users-sidebar { width: 100%; height: 40vh; min-height: 200px; border-bottom: 2px solid rgba(0, 243, 255, 0.5); } 
+            .users-sidebar { width: 100%; height: 40vh; min-height: 250px; border-bottom: 2px solid rgba(0, 243, 255, 0.5); } 
             .main-content { width: 100%; height: 60vh; display: block; overflow-y: auto; } 
             .user-details-header { flex-direction: column; text-align: center; gap: 10px; } 
         }
@@ -70,9 +70,7 @@
         <div class="admin-panel-box" style="background: transparent; border: none; box-shadow: none;">
             <h2 id="pin-title" style="color: white; margin-bottom: 10px;">Ingresa tu PIN</h2>
             <p id="pin-error" style="color: #ff3b5c; margin-bottom: 20px; min-height: 20px;"></p>
-            <div class="pin-display">
-                <div class="pin-dot" id="dot-1"></div><div class="pin-dot" id="dot-2"></div><div class="pin-dot" id="dot-3"></div><div class="pin-dot" id="dot-4"></div>
-            </div>
+            <div class="pin-display"><div class="pin-dot" id="dot-1"></div><div class="pin-dot" id="dot-2"></div><div class="pin-dot" id="dot-3"></div><div class="pin-dot" id="dot-4"></div></div>
             <div class="pin-pad">
                 <button class="pin-btn" onclick="addPin('1')">1</button><button class="pin-btn" onclick="addPin('2')">2</button><button class="pin-btn" onclick="addPin('3')">3</button>
                 <button class="pin-btn" onclick="addPin('4')">4</button><button class="pin-btn" onclick="addPin('5')">5</button><button class="pin-btn" onclick="addPin('6')">6</button>
@@ -86,13 +84,25 @@
     <div id="dashboard-section" class="screen">
         <div class="users-sidebar">
             <div class="sidebar-header">
-                <h3 style="color: white;">Usuarios Registrados</h3>
-                <p id="total-users" style="color: #00f3ff; font-weight: bold; font-size: 1.1rem; margin-top: 5px;">Total: 0</p>
-                <button id="btn-filtro" onclick="toggleFilter()" style="width: 100%; margin-top: 10px; background: #ffcc00; color: #111; border: none; padding: 10px; border-radius: 10px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(255,204,0,0.2);">🔔 Ver Solo Pendientes</button>
+                <!-- 👇 MINI DASHBOARD INTELIGENTE 👇 -->
+                <h3 style="color: white; margin-bottom: 10px; font-size: 1.1rem;">Dashboard Analytics</h3>
+                <div style="display: flex; gap: 5px; justify-content: space-between; margin-bottom: 10px;">
+                    <div style="background: rgba(0,243,255,0.1); border: 1px solid #00f3ff; border-radius: 8px; padding: 8px; flex: 1;">
+                        <div style="font-size: 0.65rem; color: #cfd8dc;">USUARIOS</div>
+                        <div id="stat-total" style="font-size: 1.1rem; font-weight: bold; color: white;">0</div>
+                    </div>
+                    <div style="background: rgba(255,204,0,0.1); border: 1px solid #ffcc00; border-radius: 8px; padding: 8px; flex: 1;">
+                        <div style="font-size: 0.65rem; color: #cfd8dc;">REVISIÓN</div>
+                        <div id="stat-revision" style="font-size: 1.1rem; font-weight: bold; color: #ffcc00;">0</div>
+                    </div>
+                    <div style="background: rgba(40,167,69,0.1); border: 1px solid #28a745; border-radius: 8px; padding: 8px; flex: 1;">
+                        <div style="font-size: 0.65rem; color: #cfd8dc;">REFERIDOS</div>
+                        <div id="stat-referidos" style="font-size: 1.1rem; font-weight: bold; color: #28a745;">0</div>
+                    </div>
+                </div>
+                <button id="btn-filtro" onclick="toggleFilter()" style="width: 100%; background: #ffcc00; color: #111; border: none; padding: 10px; border-radius: 10px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(255,204,0,0.2);">🔔 Ver Solo Pendientes</button>
             </div>
-            <div class="user-list" id="user-list-container">
-                <p style="text-align: center; color: #666; margin-top: 20px;">Cargando usuarios...</p>
-            </div>
+            <div class="user-list" id="user-list-container"><p style="text-align: center; color: #666; margin-top: 20px;">Cargando usuarios...</p></div>
         </div>
 
         <div class="main-content">
@@ -108,17 +118,11 @@
                     <button id="btn-eliminar-usuario" style="background-color: #ff3b5c; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.8rem; margin-top: 10px; display: none;">🗑️ Eliminar Usuario</button>
                 </div>
             </div>
-            <div id="historial-admin" class="historial-admin" style="display: none;">
-                <span style="font-size: 0.9rem; color: #aaa;">Historial:</span>
-                <div id="botones-historial" style="display:flex; gap:10px; flex-wrap:wrap;"></div>
-            </div>
-            <div id="panel-estado" class="estado-usuario" style="display: none;">
-                Estado: <span id="txt-estado" style="color: #00f3ff;">Esperando acción...</span>
-            </div>
+            <div id="historial-admin" class="historial-admin" style="display: none;"><span style="font-size: 0.9rem; color: #aaa;">Historial:</span><div id="botones-historial" style="display:flex; gap:10px; flex-wrap:wrap;"></div></div>
+            <div id="panel-estado" class="estado-usuario" style="display: none;">Estado: <span id="txt-estado" style="color: #00f3ff;">Esperando acción...</span></div>
             <div id="visor-revision" class="visor-revision">
                 <h3 style="color: white; margin-bottom: 10px;">Revisión - Paso <span id="num-paso-revisar"></span></h3>
                 <div id="contenido-revisar"></div>
-                <!-- 👇 MENÚ DE APROBACIÓN Y RECHAZOS RÁPIDOS 👇 -->
                 <div style="margin-top: 15px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;">
                     <button id="btn-aprobar" class="btn-aprobar">✅ APROBAR PASO</button>
                     <p style="width: 100%; font-size: 0.8rem; margin: 10px 0 5px 0; color: #ff3b5c; font-weight: bold;">OPCIONES DE RECHAZO RÁPIDO:</p>
@@ -155,51 +159,32 @@
         let currentUserId = null; let unsubscribeUser = null; 
         let currentPin = ''; let settingUpPin = false; let requiresReviewGlobal = false; 
 
-        let todosLosUsuarios = [];
-        let paginaActual = 1;
-        const usuariosPorPagina = 10;
-        let verSoloPendientes = false;
-
+        let todosLosUsuarios = []; let paginaActual = 1; const usuariosPorPagina = 10; let verSoloPendientes = false;
         const loginScreen = document.getElementById('login-section'); const pinScreen = document.getElementById('pin-section'); const dashboardScreen = document.getElementById('dashboard-section'); const audioAlert = document.getElementById('alerta-sonido');
 
-        window.addPin = function(num) {
-            if(currentPin.length < 4) { currentPin += num; document.getElementById('dot-' + currentPin.length).classList.add('filled'); }
-            if(currentPin.length === 4) setTimeout(procesarPin, 200); 
-        }
-        window.delPin = function() {
-            if(currentPin.length > 0) { document.getElementById('dot-' + currentPin.length).classList.remove('filled'); currentPin = currentPin.slice(0, -1); }
-        }
+        window.addPin = function(num) { if(currentPin.length < 4) { currentPin += num; document.getElementById('dot-' + currentPin.length).classList.add('filled'); } if(currentPin.length === 4) setTimeout(procesarPin, 200); }
+        window.delPin = function() { if(currentPin.length > 0) { document.getElementById('dot-' + currentPin.length).classList.remove('filled'); currentPin = currentPin.slice(0, -1); } }
         function resetPinUI() { currentPin = ''; for(let i=1; i<=4; i++) document.getElementById('dot-'+i).classList.remove('filled'); }
-        function procesarPin() {
-            const savedPin = localStorage.getItem('admin_pin_tiktok'); const pinError = document.getElementById('pin-error');
-            if(settingUpPin) { localStorage.setItem('admin_pin_tiktok', currentPin); abrirDashboard(); } 
-            else { if(currentPin === savedPin) { abrirDashboard(); } else { pinError.innerText = "PIN Incorrecto"; resetPinUI(); setTimeout(() => pinError.innerText = "", 2000); } }
-        }
+        function procesarPin() { const savedPin = localStorage.getItem('admin_pin_tiktok'); const pinError = document.getElementById('pin-error'); if(settingUpPin) { localStorage.setItem('admin_pin_tiktok', currentPin); abrirDashboard(); } else { if(currentPin === savedPin) { abrirDashboard(); } else { pinError.innerText = "PIN Incorrecto"; resetPinUI(); setTimeout(() => pinError.innerText = "", 2000); } } }
         window.cerrarSesionTotal = function() { localStorage.removeItem('admin_pin_tiktok'); signOut(auth).then(() => { window.location.reload(); }); }
 
         document.getElementById('btn-admin-login').addEventListener('click', () => {
-            document.getElementById('admin-error').style.display = 'none';
-            const email = document.getElementById('admin-email').value; const pass = document.getElementById('admin-pass').value;
+            document.getElementById('admin-error').style.display = 'none'; const email = document.getElementById('admin-email').value; const pass = document.getElementById('admin-pass').value;
             if(email !== "wilmergabriellucenacrespo@gmail.com") { document.getElementById('admin-error').innerText = "Acceso denegado."; document.getElementById('admin-error').style.display = 'block'; return; }
             signInWithEmailAndPassword(auth, email, pass).catch(err => { document.getElementById('admin-error').innerText = "Error: " + err.message; document.getElementById('admin-error').style.display = 'block'; });
         });
 
         onAuthStateChanged(auth, (user) => {
             if (user && user.email === "wilmergabriellucenacrespo@gmail.com") { 
-                loginScreen.style.display = 'none';
-                if(localStorage.getItem('admin_pin_tiktok')) { settingUpPin = false; document.getElementById('pin-title').innerText = "Ingresa tu PIN"; pinScreen.style.display = 'flex'; } 
-                else { settingUpPin = true; document.getElementById('pin-title').innerText = "Crea un PIN de 4 dígitos"; pinScreen.style.display = 'flex'; }
+                loginScreen.style.display = 'none'; if(localStorage.getItem('admin_pin_tiktok')) { settingUpPin = false; document.getElementById('pin-title').innerText = "Ingresa tu PIN"; pinScreen.style.display = 'flex'; } else { settingUpPin = true; document.getElementById('pin-title').innerText = "Crea un PIN de 4 dígitos"; pinScreen.style.display = 'flex'; }
             } else { loginScreen.style.display = 'flex'; pinScreen.style.display = 'none'; dashboardScreen.style.display = 'none'; }
         });
 
         function abrirDashboard() { pinScreen.style.display = 'none'; dashboardScreen.style.display = 'flex'; audioAlert.play().then(() => audioAlert.pause()).catch(e=>{}); cargarUsuarios(); }
 
         window.toggleFilter = function() {
-            verSoloPendientes = !verSoloPendientes;
-            paginaActual = 1; 
-            const btn = document.getElementById('btn-filtro');
-            if(verSoloPendientes) { btn.innerText = "👥 Ver Todos los Usuarios"; btn.style.background = "#00f3ff"; } 
-            else { btn.innerText = "🔔 Ver Solo Pendientes"; btn.style.background = "#ffcc00"; }
+            verSoloPendientes = !verSoloPendientes; paginaActual = 1; const btn = document.getElementById('btn-filtro');
+            if(verSoloPendientes) { btn.innerText = "👥 Ver Todos los Usuarios"; btn.style.background = "#00f3ff"; } else { btn.innerText = "🔔 Ver Solo Pendientes"; btn.style.background = "#ffcc00"; }
             renderizarListaUsuarios();
         }
 
@@ -208,7 +193,6 @@
         function renderizarListaUsuarios() {
             const container = document.getElementById('user-list-container'); container.innerHTML = ''; 
             let listaFiltrada = verSoloPendientes ? todosLosUsuarios.filter(u => u.estadoPaso === 'revision') : todosLosUsuarios;
-            document.getElementById('total-users').innerText = `Total en lista: ${listaFiltrada.length}`;
 
             const totalPaginas = Math.ceil(listaFiltrada.length / usuariosPorPagina) || 1;
             if(paginaActual > totalPaginas) paginaActual = totalPaginas;
@@ -229,25 +213,30 @@
             });
 
             const pagControls = document.createElement('div'); pagControls.className = 'pag-controls';
-            pagControls.innerHTML = `
-                <button onclick="cambiarPagina(-1)" class="pag-btn" ${paginaActual === 1 ? 'disabled' : ''}>◀ Ant</button>
-                <span style="font-size: 0.8rem;">Pág ${paginaActual} de ${totalPaginas}</span>
-                <button onclick="cambiarPagina(1)" class="pag-btn" ${paginaActual === totalPaginas ? 'disabled' : ''}>Sig ▶</button>
-            `;
+            pagControls.innerHTML = `<button onclick="cambiarPagina(-1)" class="pag-btn" ${paginaActual === 1 ? 'disabled' : ''}>◀ Ant</button><span style="font-size: 0.8rem;">Pág ${paginaActual} de ${totalPaginas}</span><button onclick="cambiarPagina(1)" class="pag-btn" ${paginaActual === totalPaginas ? 'disabled' : ''}>Sig ▶</button>`;
             container.appendChild(pagControls);
         }
 
         function cargarUsuarios() {
             onSnapshot(collection(db, "usuarios"), (snapshot) => {
                 todosLosUsuarios = []; let hayRevisiones = false;
+                let totalRev = 0; let totalRef = 0; // Variables para el Dashboard
+
                 snapshot.forEach((doc) => {
-                    const user = { id: doc.id, ...doc.data() }; todosLosUsuarios.push(user);
-                    if (user.estadoPaso === 'revision') hayRevisiones = true;
+                    const user = { id: doc.id, ...doc.data() }; 
+                    todosLosUsuarios.push(user);
+                    if (user.estadoPaso === 'revision') { hayRevisiones = true; totalRev++; }
+                    if (user.cantidadReferidos) { totalRef += user.cantidadReferidos; }
                 });
+
+                // Actualizar Mini-Dashboard
+                document.getElementById('stat-total').innerText = todosLosUsuarios.length;
+                document.getElementById('stat-revision').innerText = totalRev;
+                document.getElementById('stat-referidos').innerText = totalRef;
+
                 todosLosUsuarios.sort((a, b) => {
                     if (a.estadoPaso === 'revision' && b.estadoPaso !== 'revision') return -1;
-                    if (a.estadoPaso !== 'revision' && b.estadoPaso === 'revision') return 1;
-                    return 0;
+                    if (a.estadoPaso !== 'revision' && b.estadoPaso === 'revision') return 1; return 0;
                 });
                 renderizarListaUsuarios();
                 if(hayRevisiones && !requiresReviewGlobal) { audioAlert.play().catch(e=>{}); }
@@ -266,8 +255,7 @@
         function actualizarVisor(datos) {
             document.getElementById('active-user-name').innerText = datos.nombre + " " + datos.apellido; document.getElementById('active-user-email').innerText = datos.email;
             document.getElementById('active-user-ci').innerText = datos.cedula; document.getElementById('active-user-tel').innerText = datos.telefono || "No registrado";
-            document.getElementById('active-user-refs').innerText = datos.cantidadReferidos || "0";
-            document.getElementById('btn-eliminar-usuario').style.display = 'inline-block';
+            document.getElementById('active-user-refs').innerText = datos.cantidadReferidos || "0"; document.getElementById('btn-eliminar-usuario').style.display = 'inline-block';
             
             const contHistorial = document.getElementById('historial-admin'); const botonesDiv = document.getElementById('botones-historial'); botonesDiv.innerHTML = '';
             if(datos.pasoActual > 1) {
@@ -275,11 +263,9 @@
                 for(let i = 1; i < datos.pasoActual; i++) {
                     if(i === 4) continue; 
                     const btn = document.createElement('button'); btn.className = 'btn-historial'; btn.innerText = '✅ Ver Paso ' + i;
-                    btn.onclick = () => {
-                        document.getElementById('visor-modal-admin').style.display = 'flex'; document.getElementById('modal-titulo-admin').innerText = 'Comprobante Paso ' + i;
+                    btn.onclick = () => { document.getElementById('visor-modal-admin').style.display = 'flex'; document.getElementById('modal-titulo-admin').innerText = 'Comprobante Paso ' + i;
                         const cont = document.getElementById('modal-contenido-admin');
-                        if(i === 3) cont.innerHTML = `<h2 style="color:white; letter-spacing: 2px;">${datos['comprobantePaso'+i]}</h2>`;
-                        else cont.innerHTML = `<img src="${datos['comprobantePaso'+i]}" style="max-width: 100%; border-radius: 10px;">`;
+                        if(i === 3) cont.innerHTML = `<h2 style="color:white; letter-spacing: 2px;">${datos['comprobantePaso'+i]}</h2>`; else cont.innerHTML = `<img src="${datos['comprobantePaso'+i]}" style="max-width: 100%; border-radius: 10px;">`;
                     }; botonesDiv.appendChild(btn);
                 }
             } else { contHistorial.style.display = 'none'; }
@@ -289,8 +275,7 @@
             if(datos.pasoActual > 5) { visor.style.display = 'none'; txtEstado.innerText = "¡PROCESO 100% COMPLETADO!"; txtEstado.style.color = "#28a745"; return; }
 
             if (datos.estadoPaso === "revision") {
-                txtEstado.innerText = `Revisando Paso ${datos.pasoActual} (Requiere tu aprobación)`; txtEstado.style.color = "#ffcc00";
-                visor.style.display = 'block'; document.getElementById('num-paso-revisar').innerText = datos.pasoActual;
+                txtEstado.innerText = `Revisando Paso ${datos.pasoActual} (Requiere tu aprobación)`; txtEstado.style.color = "#ffcc00"; visor.style.display = 'block'; document.getElementById('num-paso-revisar').innerText = datos.pasoActual;
                 const contRevisar = document.getElementById('contenido-revisar'); const comprobante = datos[`comprobantePaso${datos.pasoActual}`];
                 if(datos.pasoActual === 1 || datos.pasoActual === 2 || datos.pasoActual === 5) { contRevisar.innerHTML = `<img src="${comprobante}" alt="Captura">`; } 
                 else if(datos.pasoActual === 3) { contRevisar.innerHTML = `<div class="visor-texto" style="font-size:1.5rem; letter-spacing:2px; font-weight:bold;">${comprobante}</div>`; } 
@@ -303,32 +288,19 @@
             await addDoc(collection(db, `chats/${currentUserId}/mensajes`), { texto: `✅ Paso ${pasoPendienteAdmin} Aprobado. Puedes continuar.`, sender: "admin", timestamp: serverTimestamp() });
         });
 
-        // 👇 LÓGICA DE RECHAZO RÁPIDO 👇
         window.rechazarRapido = async function(motivo) {
-            if(!currentUserId) return; 
-            await updateDoc(doc(db, "usuarios", currentUserId), { estadoPaso: "pendiente" });
+            if(!currentUserId) return; await updateDoc(doc(db, "usuarios", currentUserId), { estadoPaso: "pendiente" });
             await addDoc(collection(db, `chats/${currentUserId}/mensajes`), { texto: `❌ Hay un error en tu Paso ${pasoPendienteAdmin}.\n\nDetalle: ${motivo}.\n\nPor favor, arréglalo y vuelve a subir la captura.`, sender: "admin", timestamp: serverTimestamp() });
         }
 
         document.getElementById('btn-eliminar-usuario').addEventListener('click', async () => {
             if (!currentUserId) return;
             if (confirm("⚠️ ¿Eliminar a este usuario por completo?")) {
-                try {
-                    await deleteDoc(doc(db, "usuarios", currentUserId)); document.getElementById('panel-estado').style.display = 'none'; document.getElementById('visor-revision').style.display = 'none';
-                    document.getElementById('historial-admin').style.display = 'none'; document.getElementById('active-user-name').innerText = "Selecciona un usuario"; document.getElementById('btn-eliminar-usuario').style.display = 'none';
-                    document.getElementById('chat-box').innerHTML = '<div style="text-align: center; margin-top: 50px; color: #666;">Selecciona un usuario...</div>'; currentUserId = null;
-                } catch(error) { alert("Error: " + error.message); }
+                try { await deleteDoc(doc(db, "usuarios", currentUserId)); document.getElementById('panel-estado').style.display = 'none'; document.getElementById('visor-revision').style.display = 'none'; document.getElementById('historial-admin').style.display = 'none'; document.getElementById('active-user-name').innerText = "Selecciona un usuario"; document.getElementById('btn-eliminar-usuario').style.display = 'none'; document.getElementById('chat-box').innerHTML = '<div style="text-align: center; margin-top: 50px; color: #666;">Selecciona un usuario...</div>'; currentUserId = null; } catch(error) { alert("Error: " + error.message); }
             }
         });
 
-        function cargarChat(userId) {
-            const chatBox = document.getElementById('chat-box');
-            onSnapshot(query(collection(db, `chats/${userId}/mensajes`), orderBy("timestamp", "asc")), (snapshot) => {
-                chatBox.innerHTML = ''; 
-                snapshot.forEach((doc) => { const msg = doc.data(); const div = document.createElement('div'); div.className = msg.sender === 'admin' ? 'user-msg' : 'bot-msg'; div.innerText = msg.texto; chatBox.appendChild(div); });
-                chatBox.scrollTop = chatBox.scrollHeight;
-            });
-        }
+        function cargarChat(userId) { const chatBox = document.getElementById('chat-box'); onSnapshot(query(collection(db, `chats/${userId}/mensajes`), orderBy("timestamp", "asc")), (snapshot) => { chatBox.innerHTML = ''; snapshot.forEach((doc) => { const msg = doc.data(); const div = document.createElement('div'); div.className = msg.sender === 'admin' ? 'user-msg' : 'bot-msg'; div.innerText = msg.texto; chatBox.appendChild(div); }); chatBox.scrollTop = chatBox.scrollHeight; }); }
         async function enviarMensaje() { const input = document.getElementById('chat-input'); if (input.value.trim() === "" || !currentUserId) return; const texto = input.value.trim(); input.value = ''; await addDoc(collection(db, `chats/${currentUserId}/mensajes`), { texto: texto, sender: "admin", timestamp: serverTimestamp() }); }
         document.getElementById('btn-send-msg').addEventListener('click', enviarMensaje); document.getElementById('chat-input').addEventListener('keypress', (e) => { if(e.key === 'Enter') enviarMensaje(); });
     </script>
