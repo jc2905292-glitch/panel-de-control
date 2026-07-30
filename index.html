@@ -55,13 +55,21 @@
         .pag-btn { background: #00f3ff; color: #111; border: none; padding: 8px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; }
         .pag-btn:disabled { background: #666; color: #aaa; cursor: not-allowed; }
 
-        /* Ajuste de pantalla para iPhone (Reparado) */
+        /* 📱 AJUSTES MÓVILES REPARADOS: El espacio para usuarios ya no será aplastado */
         @media (max-width: 768px) { 
+            body { height: auto; overflow: auto; display: block; } /* Permite deslizar toda la página hacia abajo */
+            .screen { height: auto; min-height: 100vh; }
             #dashboard-section { flex-direction: column; display: flex; } 
-            .users-sidebar { width: 100%; height: 55vh; flex: none; border-bottom: 2px solid rgba(0, 243, 255, 0.5); display: flex; flex-direction: column; } 
-            .user-list { flex-grow: 1; overflow-y: auto; min-height: 80px; }
-            .main-content { width: 100%; height: 45vh; flex: none; display: flex; flex-direction: column; overflow-y: auto; } 
+            
+            .users-sidebar { width: 100%; height: auto; display: flex; flex-direction: column; border-bottom: 2px solid rgba(0, 243, 255, 0.5); } 
+            .sidebar-header { padding: 15px 10px; }
+            
+            /* CAJA DE USUARIOS CON ESPACIO GARANTIZADO */
+            .user-list { height: 260px; overflow-y: auto; flex: none; padding-bottom: 15px; } 
+            
+            .main-content { width: 100%; height: auto; min-height: 70vh; display: flex; flex-direction: column; } 
             .user-details-header { flex-direction: column; text-align: center; gap: 10px; } 
+            .bot-body { min-height: 300px; }
         }
     </style>
 </head>
