@@ -455,19 +455,46 @@
                 const panelRetiro = document.getElementById('retiro-admin-container');
                 if (datos.retiroPendiente) {
                     panelRetiro.style.display = 'block';
-                    document.getElementById('retiro-monto').innerText = `$${datos.montoPendiente.toFixed(2)}`;
+                    const montoVal = datos.montoPendiente || 0;
+                    document.getElementById('retiro-monto').innerText = `$${montoVal.toFixed(2)}`;
                     document.getElementById('retiro-metodo').innerText = datos.metodoPago ? datos.metodoPago.metodo : 'N/A';
                     document.getElementById('retiro-datos').innerText = datos.metodoPago ? datos.metodoPago.datos : 'N/A';
                     
-                    document.getElementById('btn-aprobar-retiro').onclick = async () => {
-                        const nuevoRetirado = (datos.saldoRetirado || 0) + datos.montoPendiente;
-                        const historial = datos.historialRetiros || [];
-                        const dir = datos.metodoPago ? datos.metodoPago.datos : 'N/A';
-                        historial.push({ monto: datos.montoPendiente, metodo: datos.metodoPago.metodo, cuenta: dir, fecha: new Date().toISOString() });
+                    document.getElementById('btn-aprobar-retiro').onclick = async (e) => {
+                        const btn = e.target;
+                        btn.innerText = "Procesando pago... ⏳";
+                        btn.disabled = true;
                         
-                        await updateDoc(doc(db, "usuarios", currentUserId), { retiroPendiente: false, saldoRetirado: nuevoRetirado, historialRetiros: historial, montoPendiente: 0 });
-                        await addDoc(collection(db, `chats/${currentUserId}/mensajes`), { texto: `✅ Tu retiro de $${datos.montoPendiente.toFixed(2)} USD ha sido PAGADO con éxito. Revisa tu cuenta.`, sender: "admin", timestamp: serverTimestamp() });
-                        alert("✅ Retiro aprobado y marcado como pagado.");
+                        try {
+                            const nuevoRetirado = (datos.saldoRetirado || 0) + montoVal;
+                            const historial = datos.historialRetiros || [];
+                            
+                            // Corrección del error que rompía el botón:
+                            const metodoStr = datos.metodoPago ? datos.metodoPago.metodo : 'Manual';
+                            const dirStr = datos.metodoPago ? datos.metodoPago.datos : 'N/A';
+                            
+                            historial.push({ monto: montoVal, metodo: metodoStr, cuenta: dirStr, fecha: new Date().toISOString() });
+                            
+                            await updateDoc(doc(db, "usuarios", currentUserId), { 
+                                retiroPendiente: false, 
+                                saldoRetirado: nuevoRetirado, 
+                                historialRetiros: historial, 
+                                montoPendiente: 0 
+                            });
+                            
+                            await addDoc(collection(db, `chats/${currentUserId}/mensajes`), { 
+                                texto: `✅ Tu retiro de $${montoVal.toFixed(2)} USD ha sido PAGADO con éxito. Revisa tu historial de cuenta.`, 
+                                sender: "admin", 
+                                timestamp: serverTimestamp() 
+                            });
+                            
+                            alert("✅ Retiro aprobado y marcado como pagado exitosamente.");
+                        } catch (error) {
+                            alert("❌ Hubo un error al procesar: " + error.message);
+                        } finally {
+                            btn.innerText = "✅ Confirmar Pago Realizado";
+                            btn.disabled = false;
+                        }
                     };
                 } else { panelRetiro.style.display = 'none'; }
            const contHistorial = document.getElementById('historial-admin'); const botonesDiv = document.getElementById('botones-historial'); botonesDiv.innerHTML = '';
