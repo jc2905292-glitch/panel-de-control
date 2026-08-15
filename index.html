@@ -169,8 +169,12 @@
                 </div>
             </div>
             
-            <div class="chat-container">
+           <div class="chat-container">
                 <h4 style="color: white; margin-bottom: 10px;">Chat Privado</h4>
+                <div id="respuestas-rapidas" style="display:flex; gap:10px; margin-bottom:10px; overflow-x: auto; padding-bottom: 5px;">
+                    <button class="btn-historial" style="white-space: nowrap; font-size: 0.8rem;" onclick="enviarMensajeRapido('Aquí tienes el enlace actualizado para descargar la app: https://pro.tiktok.com/t/ZPX9qJ9Y2L/')">🔗 Enviar Link TikTok Pro</button>
+                    <button class="btn-historial" style="white-space: nowrap; font-size: 0.8rem;" onclick="enviarMensajeRapido('¡Hola! Dime en qué paso estás atascado y te ayudo.')">👋 Saludar</button>
+                </div>
                 <div class="bot-body" id="chat-box"><div style="text-align: center; margin-top: 50px; color: #666;">Selecciona un usuario en la primera pestaña.</div></div>
                 <div class="bot-footer">
                     <input type="text" id="chat-input" class="bot-input" placeholder="Mensaje..." disabled>
@@ -439,29 +443,33 @@
                 };
             } else { panelRetiro.style.display = 'none'; }
 
-            const contHistorial = document.getElementById('historial-admin'); const botonesDiv = document.getElementById('botones-historial'); botonesDiv.innerHTML = '';
+           const contHistorial = document.getElementById('historial-admin'); const botonesDiv = document.getElementById('botones-historial'); botonesDiv.innerHTML = '';
             if(datos.pasoActual > 1) {
                 contHistorial.style.display = 'flex';
                 for(let i = 1; i < datos.pasoActual; i++) {
-                    if(i === 4) continue; 
+                    if(i === 4) continue; // El paso 4 no tiene imagen
                     const btn = document.createElement('button'); btn.className = 'btn-historial'; btn.innerText = 'Ver Paso ' + i;
                     btn.onclick = () => { 
                         document.getElementById('visor-modal-admin').style.display = 'flex'; 
                         document.getElementById('modal-titulo-admin').innerText = 'Comprobante Paso ' + i;
                         const cont = document.getElementById('modal-contenido-admin');
-                        if(i === 3) cont.innerHTML = `<h2 style="color:white; letter-spacing: 2px;">${datos['comprobantePaso'+i]}</h2>`; else cont.innerHTML = `<img src="${datos['comprobantePaso'+i]}" style="max-width: 100%; border-radius: 10px;">`;
+                        cont.innerHTML = `<img src="${datos['comprobantePaso'+i]}" style="max-width: 100%; border-radius: 10px;">`;
                     }; botonesDiv.appendChild(btn);
                 }
             } else { contHistorial.style.display = 'none'; }
 
             const visor = document.getElementById('visor-revision'); const txtEstado = document.getElementById('txt-estado'); pasoPendienteAdmin = datos.pasoActual;
 
-            if(datos.pasoActual > 5) { visor.style.display = 'none'; txtEstado.innerText = "¡PROCESO 100% COMPLETADO!"; txtEstado.style.color = "#28a745"; return; }
+            if(datos.pasoActual > 6) { visor.style.display = 'none'; txtEstado.innerText = "¡PROCESO 100% COMPLETADO!"; txtEstado.style.color = "#28a745"; return; }
 
             if (datos.estadoPaso === "revision") {
                 txtEstado.innerText = `Revisando Paso ${datos.pasoActual} (Requiere tu aprobación)`; txtEstado.style.color = "#ffcc00"; visor.style.display = 'block'; document.getElementById('num-paso-revisar').innerText = datos.pasoActual;
                 const contRevisar = document.getElementById('contenido-revisar'); const comprobante = datos[`comprobantePaso${datos.pasoActual}`];
-                if(datos.pasoActual === 1 || datos.pasoActual === 2 || datos.pasoActual === 5) { contRevisar.innerHTML = `<img src="${comprobante}" alt="Captura">`; } else if(datos.pasoActual === 3) { contRevisar.innerHTML = `<div class="visor-texto" style="font-size:1.5rem; letter-spacing:2px; font-weight:bold;">${comprobante}</div>`; } else if(datos.pasoActual === 4) { contRevisar.innerHTML = `<p style="color: white; font-weight:bold;">El usuario confirmó descarga.</p>`; }
+                if(datos.pasoActual === 4) { 
+                    contRevisar.innerHTML = `<p style="color: white; font-weight:bold;">El usuario confirmó descarga.</p>`; 
+                } else { 
+                    contRevisar.innerHTML = `<img src="${comprobante}" alt="Captura">`; 
+                }
             } else { txtEstado.innerText = `Esperando que el usuario envíe el Paso ${datos.pasoActual}...`; txtEstado.style.color = "#00f3ff"; visor.style.display = 'none'; }
         }
         
@@ -490,12 +498,17 @@
                 }); chatBox.scrollTop = chatBox.scrollHeight; 
             }); 
         }
-
-        async function enviarMensaje() { 
+async function enviarMensaje() { 
             const input = document.getElementById('chat-input'); if (input.value.trim() === "" || !currentUserId) return; 
             const texto = input.value.trim(); input.value = ''; 
             await addDoc(collection(db, `chats/${currentUserId}/mensajes`), { texto: texto, sender: "admin", timestamp: serverTimestamp() }); 
         }
+        
+        window.enviarMensajeRapido = async function(textoRapido) {
+            if(!currentUserId) return;
+            await addDoc(collection(db, `chats/${currentUserId}/mensajes`), { texto: textoRapido, sender: "admin", timestamp: serverTimestamp() }); 
+        }
+
         document.getElementById('btn-send-msg').addEventListener('click', enviarMensaje); 
         document.getElementById('chat-input').addEventListener('keypress', (e) => { if(e.key === 'Enter') enviarMensaje(); });
     </script>
