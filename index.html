@@ -35,7 +35,11 @@
         .dashboard-tab.active { display: flex; }
         
         /* BOTONERA INFERIOR */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: calc(70px + env(safe-area-inset-bottom)); background: #111; border-top: 1px solid #00f3ff; display: flex; z-index: 9999; padding-bottom: env(safe-area-inset-bottom); }
+        /* Eliminamos el 'display: flex' directo para que herede del contenedor si está oculto */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: calc(70px + env(safe-area-inset-bottom)); background: #111; border-top: 1px solid #00f3ff; z-index: 9999; padding-bottom: env(safe-area-inset-bottom); display: none; }
+        
+        /* Solo mostramos la botonera cuando el dashboard está activo */
+        #dashboard-section[style*="display: flex"] .bottom-nav { display: flex; }
         .nav-btn { flex: 1; background: transparent; border: none; color: #cfd8dc; font-size: 1.5rem; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s; opacity: 0.6; }
         .nav-btn.active { color: #00f3ff; background: rgba(0, 243, 255, 0.1); border-top: 3px solid #00f3ff; opacity: 1; }
         .nav-btn span { font-size: 0.75rem; font-weight: bold; margin-top: 5px; }
@@ -299,10 +303,25 @@
             signInWithEmailAndPassword(auth, email, pass).catch(err => { document.getElementById('admin-error').innerText = "Error: " + err.message; document.getElementById('admin-error').style.display = 'block'; });
         });
 
-        onAuthStateChanged(auth, (user) => {
+       onAuthStateChanged(auth, (user) => {
+            // Ocultamos todas las pantallas por defecto al cambiar de estado
+            loginScreen.style.display = 'none';
+            pinScreen.style.display = 'none';
+            dashboardScreen.style.display = 'none';
+            
             if (user && user.email === "wilmergabriellucenacrespo@gmail.com") { 
-                loginScreen.style.display = 'none'; if(localStorage.getItem('admin_pin_tiktok')) { settingUpPin = false; document.getElementById('pin-title').innerText = "Ingresa tu PIN"; pinScreen.style.display = 'flex'; } else { settingUpPin = true; document.getElementById('pin-title').innerText = "Crea un PIN de 4 dígitos"; pinScreen.style.display = 'flex'; }
-            } else { loginScreen.style.display = 'flex'; pinScreen.style.display = 'none'; dashboardScreen.style.display = 'none'; }
+                if(localStorage.getItem('admin_pin_tiktok')) { 
+                    settingUpPin = false; 
+                    document.getElementById('pin-title').innerText = "Ingresa tu PIN"; 
+                    pinScreen.style.display = 'flex'; 
+                } else { 
+                    settingUpPin = true; 
+                    document.getElementById('pin-title').innerText = "Crea un PIN de 4 dígitos"; 
+                    pinScreen.style.display = 'flex'; 
+                }
+            } else { 
+                loginScreen.style.display = 'flex'; 
+            }
         });
 
         function abrirDashboard() { pinScreen.style.display = 'none'; dashboardScreen.style.display = 'flex'; audioAlert.play().then(() => audioAlert.pause()).catch(e=>{}); cargarUsuarios(); }
