@@ -34,12 +34,8 @@
         .dashboard-tab { display: none; flex-direction: column; height: calc(100vh - 70px - env(safe-area-inset-bottom)); width: 100%; overflow-y: auto; overflow-x: hidden; }
         .dashboard-tab.active { display: flex; }
         
-        /* BOTONERA INFERIOR */
-        /* Eliminamos el 'display: flex' directo para que herede del contenedor si está oculto */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: calc(70px + env(safe-area-inset-bottom)); background: #111; border-top: 1px solid #00f3ff; z-index: 9999; padding-bottom: env(safe-area-inset-bottom); display: none; }
-        
-        /* Solo mostramos la botonera cuando el dashboard está activo */
-        #dashboard-section[style*="display: flex"] .bottom-nav { display: flex; }
+       /* BOTONERA INFERIOR */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: calc(70px + env(safe-area-inset-bottom)); background: #111; border-top: 1px solid #00f3ff; z-index: 9999; padding-bottom: env(safe-area-inset-bottom); display: flex; }
         .nav-btn { flex: 1; background: transparent; border: none; color: #cfd8dc; font-size: 1.5rem; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s; opacity: 0.6; }
         .nav-btn.active { color: #00f3ff; background: rgba(0, 243, 255, 0.1); border-top: 3px solid #00f3ff; opacity: 1; }
         .nav-btn span { font-size: 0.75rem; font-weight: bold; margin-top: 5px; }
@@ -227,8 +223,8 @@
             </div>
         </div>
 
-        <!-- =================== BOTONERA INFERIOR =================== -->
-        <div class="bottom-nav">
+       <!-- =================== BOTONERA INFERIOR =================== -->
+        <div class="bottom-nav" id="main-bottom-nav" style="display: none;">
             <button class="nav-btn active" onclick="cambiarTab('tab-usuarios')" id="nav-btn-usuarios">
                 👥<span>Usuarios</span>
             </button>
@@ -269,11 +265,12 @@
         let todosLosUsuarios = []; 
         let paginaActual = 1; 
         const usuariosPorPagina = 10; 
-        let verSoloPendientes = false;
+       let verSoloPendientes = false;
         
         const loginScreen = document.getElementById('login-section'); 
         const pinScreen = document.getElementById('pin-section'); 
         const dashboardScreen = document.getElementById('dashboard-section'); 
+        const bottomNav = document.getElementById('main-bottom-nav'); // NUEVA LÍNEA: Referencia a la botonera
         const audioAlert = document.getElementById('alerta-sonido');
 
         // LÓGICA DE PESTAÑAS (TABS)
@@ -303,11 +300,12 @@
             signInWithEmailAndPassword(auth, email, pass).catch(err => { document.getElementById('admin-error').innerText = "Error: " + err.message; document.getElementById('admin-error').style.display = 'block'; });
         });
 
-       onAuthStateChanged(auth, (user) => {
+        onAuthStateChanged(auth, (user) => {
             // Ocultamos todas las pantallas por defecto al cambiar de estado
             loginScreen.style.display = 'none';
             pinScreen.style.display = 'none';
             dashboardScreen.style.display = 'none';
+            bottomNav.style.display = 'none'; // NUEVA LÍNEA: Forzamos ocultar la botonera
             
             if (user && user.email === "wilmergabriellucenacrespo@gmail.com") { 
                 if(localStorage.getItem('admin_pin_tiktok')) { 
@@ -324,7 +322,13 @@
             }
         });
 
-        function abrirDashboard() { pinScreen.style.display = 'none'; dashboardScreen.style.display = 'flex'; audioAlert.play().then(() => audioAlert.pause()).catch(e=>{}); cargarUsuarios(); }
+        function abrirDashboard() { 
+            pinScreen.style.display = 'none'; 
+            dashboardScreen.style.display = 'flex'; 
+            bottomNav.style.display = 'flex'; // NUEVA LÍNEA: Mostramos la botonera SOLO al abrir el dashboard
+            audioAlert.play().then(() => audioAlert.pause()).catch(e=>{}); 
+            cargarUsuarios(); 
+        }
 
         // LÓGICA DEL BOT Y ESTADÍSTICAS
         const toggleBot = document.getElementById('toggle-bot');
