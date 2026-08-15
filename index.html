@@ -134,9 +134,12 @@
                     <p>Teléfono: <strong id="active-user-tel" style="color: white;">---</strong></p>
                     <p>Cédula: <strong id="active-user-ci" style="color: white;">---</strong></p>
                     <p>Referidos: <strong id="active-user-refs" style="color: #ffcc00;">0</strong></p>
+                    <p>Saldo Manual Añadido: <strong id="active-user-smanual" style="color: #28a745;">$0</strong></p>
                 </div>
-                <button id="btn-eliminar-usuario" style="background-color: transparent; border: 1px solid #ff3b5c; color: #ff3b5c; padding: 8px 10px; border-radius: 10px; cursor: pointer; font-size: 0.9rem; margin-top: 5px; display: none;">🗑️ Eliminar Usuario Definitivamente</button>
-            </div>
+                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                    <button id="btn-anadir-saldo" style="background-color: #28a745; border: none; color: white; padding: 10px; border-radius: 10px; cursor: pointer; font-size: 0.9rem; flex-grow: 1; font-weight: bold; display: none;">💰 Añadir Saldo Manual</button>
+                    <button id="btn-eliminar-usuario" style="background-color: transparent; border: 1px solid #ff3b5c; color: #ff3b5c; padding: 10px; border-radius: 10px; cursor: pointer; font-size: 0.9rem; display: none;">🗑️ Eliminar</button>
+                </div>
 
             <div id="retiro-admin-container" style="display: none; background: rgba(40,167,69,0.2); border: 1px solid #28a745; padding: 20px; border-radius: 10px; margin: 15px;">
                 <h4 style="color: #28a745; margin-bottom: 10px; text-align: center; font-size: 1.2rem;">💸 Solicitud de Retiro</h4>
@@ -215,6 +218,7 @@
                     </div>
                 </div>
 
+                <button id="btn-eliminar-todos" style="width: 100%; padding: 15px; background: #ff3b5c; color: white; border: none; border-radius: 10px; font-weight: bold; font-size: 1.1rem; margin-bottom: 15px;">⚠️ ELIMINAR TODOS LOS USUARIOS</button>
                 <button onclick="cerrarSesionTotal()" style="width: 100%; padding: 15px; background: rgba(255,59,92,0.1); border: 1px solid #ff3b5c; color: #ff3b5c; border-radius: 10px; font-weight: bold; font-size: 1.1rem;">Cerrar Sesión (Borrar PIN)</button>
             </div>
         </div>
@@ -245,7 +249,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, addDoc, query, orderBy, serverTimestamp, doc, updateDoc, deleteDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";       
+        import { getFirestore, collection, onSnapshot, addDoc, query, orderBy, serverTimestamp, doc, updateDoc, deleteDoc, setDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";       
 
         const firebaseConfig = { apiKey: "AIzaSyDyyq2FR1ruQWlm954gH1Q0Y3KFIUn8-E4", authDomain: "cuponestiktok-8b7cb.firebaseapp.com", projectId: "cuponestiktok-8b7cb", storageBucket: "cuponestiktok-8b7cb.firebasestorage.app", messagingSenderId: "445103664448", appId: "1:445103664448:web:a21a5441149505ed0b1ea5" };
         const app = initializeApp(firebaseConfig); 
@@ -417,32 +421,48 @@
         };
 
         let pasoPendienteAdmin = 1;
-        function actualizarVisor(datos) {
-            document.getElementById('active-user-name').innerText = datos.nombre + " " + datos.apellido; 
-            document.getElementById('active-user-email').innerText = datos.email;
-            document.getElementById('active-user-ci').innerText = datos.cedula; 
-            document.getElementById('active-user-tel').innerText = datos.telefono || "No registrado";
-            document.getElementById('active-user-refs').innerText = datos.cantidadReferidos || "0"; 
-            document.getElementById('btn-eliminar-usuario').style.display = 'inline-block';
-            
-            const panelRetiro = document.getElementById('retiro-admin-container');
-            if (datos.retiroPendiente) {
-                panelRetiro.style.display = 'block';
-                document.getElementById('retiro-monto').innerText = `$${datos.montoPendiente.toFixed(2)}`;
-                document.getElementById('retiro-metodo').innerText = datos.metodoPago ? datos.metodoPago.metodo : 'N/A';
-                document.getElementById('retiro-datos').innerText = datos.metodoPago ? datos.metodoPago.datos : 'N/A';
+       function actualizarVisor(datos) {
+                document.getElementById('active-user-name').innerText = datos.nombre + " " + datos.apellido; 
+                document.getElementById('active-user-email').innerText = datos.email;
+                document.getElementById('active-user-ci').innerText = datos.cedula; 
+                document.getElementById('active-user-tel').innerText = datos.telefono || "No registrado";
+                document.getElementById('active-user-refs').innerText = datos.cantidadReferidos || "0"; 
+                document.getElementById('active-user-smanual').innerText = `$${datos.saldoManual || 0}`; 
                 
-                document.getElementById('btn-aprobar-retiro').onclick = async () => {
-                    const nuevoRetirado = (datos.saldoRetirado || 0) + datos.montoPendiente;
-                    const historial = datos.historialRetiros || [];
-                    historial.push({ monto: datos.montoPendiente, metodo: datos.metodoPago.metodo, fecha: new Date().toISOString() });
-                    
-                    await updateDoc(doc(db, "usuarios", currentUserId), { retiroPendiente: false, saldoRetirado: nuevoRetirado, historialRetiros: historial, montoPendiente: 0 });
-                    await addDoc(collection(db, `chats/${currentUserId}/mensajes`), { texto: `✅ Tu retiro de $${datos.montoPendiente.toFixed(2)} USD ha sido PAGADO con éxito. Revisa tu cuenta.`, sender: "admin", timestamp: serverTimestamp() });
-                    alert("✅ Retiro aprobado y marcado como pagado.");
+                document.getElementById('btn-eliminar-usuario').style.display = 'inline-block';
+                document.getElementById('btn-anadir-saldo').style.display = 'inline-block';
+                
+                document.getElementById('btn-anadir-saldo').onclick = async () => {
+                    const montoStr = prompt("Ingrese la cantidad de USD a añadir a este usuario:");
+                    if(montoStr) {
+                        const montoAdd = parseFloat(montoStr);
+                        if(!isNaN(montoAdd)) {
+                            const nuevoSaldoManual = (datos.saldoManual || 0) + montoAdd;
+                            await updateDoc(doc(db, "usuarios", currentUserId), { saldoManual: nuevoSaldoManual });
+                            await addDoc(collection(db, `chats/${currentUserId}/mensajes`), { texto: `🎁 El administrador ha añadido un bono de $${montoAdd.toFixed(2)} USD a tu cuenta.`, sender: "admin", timestamp: serverTimestamp() });
+                            alert(`✅ Se han añadido $${montoAdd} al usuario.`);
+                        } else { alert("Monto inválido."); }
+                    }
                 };
-            } else { panelRetiro.style.display = 'none'; }
-
+                
+                const panelRetiro = document.getElementById('retiro-admin-container');
+                if (datos.retiroPendiente) {
+                    panelRetiro.style.display = 'block';
+                    document.getElementById('retiro-monto').innerText = `$${datos.montoPendiente.toFixed(2)}`;
+                    document.getElementById('retiro-metodo').innerText = datos.metodoPago ? datos.metodoPago.metodo : 'N/A';
+                    document.getElementById('retiro-datos').innerText = datos.metodoPago ? datos.metodoPago.datos : 'N/A';
+                    
+                    document.getElementById('btn-aprobar-retiro').onclick = async () => {
+                        const nuevoRetirado = (datos.saldoRetirado || 0) + datos.montoPendiente;
+                        const historial = datos.historialRetiros || [];
+                        const dir = datos.metodoPago ? datos.metodoPago.datos : 'N/A';
+                        historial.push({ monto: datos.montoPendiente, metodo: datos.metodoPago.metodo, cuenta: dir, fecha: new Date().toISOString() });
+                        
+                        await updateDoc(doc(db, "usuarios", currentUserId), { retiroPendiente: false, saldoRetirado: nuevoRetirado, historialRetiros: historial, montoPendiente: 0 });
+                        await addDoc(collection(db, `chats/${currentUserId}/mensajes`), { texto: `✅ Tu retiro de $${datos.montoPendiente.toFixed(2)} USD ha sido PAGADO con éxito. Revisa tu cuenta.`, sender: "admin", timestamp: serverTimestamp() });
+                        alert("✅ Retiro aprobado y marcado como pagado.");
+                    };
+                } else { panelRetiro.style.display = 'none'; }
            const contHistorial = document.getElementById('historial-admin'); const botonesDiv = document.getElementById('botones-historial'); botonesDiv.innerHTML = '';
            if(datos.pasoActual > 1) {
                 contHistorial.style.display = 'flex';
@@ -490,6 +510,29 @@
             }
         });
 
+        const btnEliminarTodos = document.getElementById('btn-eliminar-todos');
+        if (btnEliminarTodos) {
+            btnEliminarTodos.addEventListener('click', async () => {
+                const passwordAdmin = prompt("⚠️ ADVERTENCIA: Estás a punto de ELIMINAR TODOS LOS USUARIOS de la base de datos. Esto no se puede revertir. Escribe 'BORRAR TODO' en mayúsculas para confirmar:");
+                if (passwordAdmin === "BORRAR TODO") {
+                    try {
+                        const querySnapshot = await getDocs(collection(db, "usuarios"));
+                        let count = 0;
+                        querySnapshot.forEach((documento) => {
+                            deleteDoc(doc(db, "usuarios", documento.id));
+                            count++;
+                        });
+                        alert(`✅ Éxito. Se eliminaron ${count} usuarios de la base de datos. Todo ha quedado en 0.`);
+                        currentUserId = null;
+                        cambiarTab('tab-usuarios');
+                    } catch (error) {
+                        alert("Error al eliminar usuarios: " + error.message);
+                    }
+                } else if (passwordAdmin !== null) {
+                    alert("❌ Confirmación incorrecta. Operación cancelada por seguridad.");
+                }
+            });
+        }
         function cargarChat(userId) { 
             const chatBox = document.getElementById('chat-box'); 
             onSnapshot(query(collection(db, `chats/${userId}/mensajes`), orderBy("timestamp", "asc")), (snapshot) => { 
